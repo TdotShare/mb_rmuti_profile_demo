@@ -5,15 +5,20 @@ class AuthAppLogoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    // ใช้ 55% ของความกว้างหน้าจอสำหรับขนาดของกล่องโลโก้ (ประมาณ 200-220px บนมือถือทั่วไป)
+    final double logoBoxSize = screenWidth * 0.55;
+    // ใช้ 75% ของขนาดกล่องสำหรับรูปโลโก้
+    final double imageSize = logoBoxSize * 0.75;
+
     return Column(
       children: [
-        // **ปรับขนาดเป็น 220x220 และใส่ Decoration กลับเข้าไป**
-        SizedBox( // กำหนดขนาด 220x220 เพื่อรองรับโลโก้ 200x200
-          width: 220,
-          height: 220,
-          child: DecoratedBox( // ใช้ DecoratedBox เพื่อใส่ decoration และ boxShadow
+        SizedBox( // กำหนดขนาดเป็นสัดส่วน
+          width: logoBoxSize,
+          height: logoBoxSize,
+          child: DecoratedBox(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(150), // ปรับรัศมีให้เป็นวงกลม
+              borderRadius: BorderRadius.circular(logoBoxSize / 2), // ปรับรัศมีให้เป็นวงกลมตามขนาด
               gradient: const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -31,11 +36,10 @@ class AuthAppLogoWidget extends StatelessWidget {
               ],
             ),
             child: Center(
-              // ใช้ Image.asset Path และขนาดใหม่ตามที่ร้องขอ
               child: Image.asset(
-                'assets/logo/rmuti.png', 
-                width: 165, // ขนาดรูปภาพที่ต้องการ
-                height: 165,
+                'assets/logo/rmuti.png',
+                width: imageSize,
+                height: imageSize,
               ),
             ),
           ),

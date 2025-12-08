@@ -1,5 +1,4 @@
 // auth_token_page.dart
-import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -29,18 +28,18 @@ class SliverFadeTransition extends StatelessWidget {
   }
 }
 
-// WhiteWaveClipper และ BackWaveClipper (คัดลอกมาจากของเดิม)
+// WhiteWaveClipper (ปรับปรุงสัดส่วน Y-coordinate เพื่อให้คลื่นอยู่ต่ำลง)
 class WhiteWaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
     path.moveTo(0, 0);
     path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height * 0.60);
+    path.lineTo(size.width, size.height * 0.55); // ปรับจาก 0.60
 
-    final controlPoint1 = Offset(size.width * 0.75, size.height * 0.60);
+    final controlPoint1 = Offset(size.width * 0.75, size.height * 0.55); // ปรับจาก 0.60
     final controlPoint2 = Offset(size.width * 0.10, size.height * 0.95);
-    final endPoint = Offset(0, size.height * 0.65);
+    final endPoint = Offset(0, size.height * 0.60); // ปรับจาก 0.65
 
     path.cubicTo(
       controlPoint1.dx, controlPoint1.dy,
@@ -57,17 +56,18 @@ class WhiteWaveClipper extends CustomClipper<Path> {
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) => true;
 }
 
+// BackWaveClipper (ปรับปรุงสัดส่วน Y-coordinate เพื่อให้คลื่นอยู่ต่ำลง)
 class BackWaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
     path.moveTo(0, 0);
     path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height * 0.62);
+    path.lineTo(size.width, size.height * 0.57); // ปรับจาก 0.62
 
-    final controlPoint1 = Offset(size.width * 0.75, size.height * 0.62);
+    final controlPoint1 = Offset(size.width * 0.75, size.height * 0.57); // ปรับจาก 0.62
     final controlPoint2 = Offset(size.width * 0.10, size.height * 0.97);
-    final endPoint = Offset(0, size.height * 0.67);
+    final endPoint = Offset(0, size.height * 0.62); // ปรับจาก 0.67
 
     path.cubicTo(
       controlPoint1.dx, controlPoint1.dy,
@@ -188,7 +188,10 @@ class _AuthTokenPageState extends State<AuthTokenPage> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final double clippedContainerHeight = size.height * 1.0;
+    final double clippedContainerHeight = size.height * 1.15;
+
+    // คำนวณขนาดโลโก้ (กำหนดให้เป็น 50% ของความกว้างหน้าจอ)
+    final double calculatedLogoSize = size.width * 0.5;
 
     return Scaffold(
       body: Stack(
@@ -238,7 +241,8 @@ class _AuthTokenPageState extends State<AuthTokenPage> with SingleTickerProvider
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const SizedBox(height: 160),
-                        const AuthAppLogoWidget(),
+                        // ส่ง calculatedLogoSize เข้าไป
+                        AuthAppLogoWidget(),
 
                         // แสดงปุ่มเมื่อโหลดสำเร็จ (fade-in)
                         if (_isLoaded)
@@ -276,6 +280,7 @@ class _AuthTokenPageState extends State<AuthTokenPage> with SingleTickerProvider
                     'กำลังโหลดข้อมูล',
                     textAlign: TextAlign.center,
                     style: TextStyle(
+                      fontFamily: 'Kanit',
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -295,6 +300,7 @@ class _AuthTokenPageState extends State<AuthTokenPage> with SingleTickerProvider
                     'เกิดข้อผิดพลาดในการโหลดข้อมูล',
                     textAlign: TextAlign.center,
                     style: TextStyle(
+                      fontFamily: 'Kanit',
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,

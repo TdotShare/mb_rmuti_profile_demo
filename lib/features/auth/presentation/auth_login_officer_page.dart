@@ -27,17 +27,19 @@ class _AuthLoginOfficerPageState extends State<AuthLoginOfficerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          const SizedBox(height: 150),
-          const AuthAppLogoWidget(),
-          AuthLoginFormWidget(
-            onSubmit: (username, password) => login(username, password),
-            voidBtnBack:  () => btnBack(),
-          ),
-        ],
+      body: SingleChildScrollView( // ⬅️ เพิ่ม SingleChildScrollView เพื่อรองรับหน้าจอขนาดเล็ก
+        child: Column(
+          children: [
+            const SizedBox(height: 50), // ⬅️ ลดระยะห่างด้านบน
+            const AuthAppLogoWidget(),
+            AuthLoginFormWidget(
+              onSubmit: (username, password) => login(username, password),
+              voidBtnBack:  () => btnBack(),
+            ),
+            const SizedBox(height: 50), // เพิ่มระยะห่างด้านล่าง
+          ],
+        ),
       ),
     );
   }
 }
-

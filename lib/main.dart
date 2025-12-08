@@ -15,6 +15,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        fontFamily: 'Kanit',
+        textTheme: ThemeData.light().textTheme.apply(fontFamily: 'Kanit'),
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFFF8A00)),
         elevatedButtonTheme: ElevatedButtonThemeData(

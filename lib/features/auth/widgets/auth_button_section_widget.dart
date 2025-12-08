@@ -32,6 +32,7 @@ class AuthButtonSectionWidget extends StatelessWidget {
                 backgroundColor: const Color(0xFFFF8A00), // สีปุ่ม
                 foregroundColor: Colors.white, // สีข้อความ (icon/text)
                 textStyle: const TextStyle(
+                  fontFamily: 'Kanit',
                   fontWeight: FontWeight.bold, // ตัวหนา
                   fontSize: 16,
                 ),
@@ -43,6 +44,7 @@ class AuthButtonSectionWidget extends StatelessWidget {
               child: const Text(
                 "เข้าสู่ระบบด้วย SSO RMUTI",
                 textAlign: TextAlign.center,
+
               ),
             ),
             const SizedBox(height: 12),
@@ -52,6 +54,7 @@ class AuthButtonSectionWidget extends StatelessWidget {
                 backgroundColor: const Color(0xFFFF8A00),
                 foregroundColor: Colors.white,
                 textStyle: const TextStyle(
+                  fontFamily: 'Kanit',
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),

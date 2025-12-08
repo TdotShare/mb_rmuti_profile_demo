@@ -10,7 +10,7 @@ class HomeContentWidget extends StatelessWidget {
         final double bannerHeight = constraints.maxHeight * bannerHeightRatio;
 
         // กำหนดความสูงของพื้นที่ข้อมูล (Info Card Area)
-        const double infoCardHeight = 103.0;
+        const double infoCardHeight = 130.0;
         // ระยะห่างรวมที่ต้องการให้ Info Card อยู่เหนือ Banner (Overlap)
         const double overlapDistance = 15.0; // กำหนดระยะ Overlap ที่ต้องการ
 
@@ -45,8 +45,6 @@ class HomeContentWidget extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 40,
-                      fontFamily: 'Itim',
-                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),
@@ -108,14 +106,12 @@ class HomeContentWidget extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Text(
                                 'สวัสดีคุณ รัฐสรณ์',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 15,
-                                  fontFamily: 'Itim',
-                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                               SizedBox(height: 4),
@@ -124,10 +120,15 @@ class HomeContentWidget extends StatelessWidget {
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 15,
-                                  fontFamily: 'Itim',
-                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
+                              SizedBox(height: 4),
+                              ElevatedButton(
+                                onPressed: () {
+                                  print("ดูบริการที่เข้าถึงได้ถูกกด");
+                                },
+                                child: const Text('ดูบริการที่เข้าถึงได้'),
+                              )
                             ],
                           ),
 
