@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:barcode_widget/barcode_widget.dart'; // ⬅️ IMPORT 1: นำเข้า BarcodeWidget
+import 'package:barcode_widget/barcode_widget.dart';
+// ⬅️ IMPORT 2: นำเข้า Widget ที่แยกออกมา
+import '../../../core/widgets/barcodeRenderer/barcode_renderer_widget.dart';
 import '../widgets/profile_action_buton_widget.dart';
 import '../widgets/profile_info_card_widget.dart';
 
@@ -16,46 +18,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final double cardSize = 250.0; // กำหนดขนาดสำหรับ QRCode/Barcode Card
 
   // ----------------------------------------------------------------------
-  // ⭐️ เมธอดหลักในการสร้าง Barcode/QR Code Widget ⭐️
+  // ⭐️ เมธอด _buildBarcodeWidget ถูกลบไปแล้ว ⭐️
   // ----------------------------------------------------------------------
-  Widget _buildBarcodeWidget({
-    required Barcode bc, // ใช้ประเภท Barcode จากไลบรารี
-    required String data,
-    required String type,
-  }) {
-    // กำหนดความสูงตามประเภท (QR Code เป็นสี่เหลี่ยม, Barcode 1D เป็นสี่เหลี่ยมผืนผ้า)
-    final double widgetHeight = type == 'QRCODE' ? cardSize : cardSize / 2;
-
-    return Container(
-      width: cardSize,
-      height: widgetHeight + 50, // เพิ่มความสูงเผื่อข้อความด้านล่าง
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Barcode/QR Code ตัวจริง
-          BarcodeWidget(
-            barcode: bc,
-            data: data,
-            width: cardSize,
-            height: widgetHeight,
-            // ปรับสีและความหนาของข้อความ
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 5),
-          // ข้อความอธิบาย
-          Text(
-            type == 'QRCODE' ? 'สแกน QR Code นี้' : 'สแกน Barcode นี้',
-            style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-          ),
-        ],
-      ),
-    );
-  }
 
   // ----------------------------------------------------------------------
   // 1. เมธอดสำหรับแสดง QR Code Popup
@@ -65,19 +29,20 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('แสดง QR Code นักศึกษา', textAlign: TextAlign.center),
-          content: SingleChildScrollView( // ใช้ SingleChildScrollView เผื่อหน้าจอขนาดเล็ก
-            child: _buildBarcodeWidget(
-              bc: Barcode.qrCode(), // ใช้ Barcode.qrCode()
+          title: const Text('QR Code', textAlign: TextAlign.center),
+          content: SingleChildScrollView(
+            child: BarcodeRendererWidget( // ⬅️ เรียกใช้ Widget ใหม่
+              bc: Barcode.qrCode(),
               data: studentId,
               type: 'QRCODE',
+              cardSize: cardSize, // ส่งค่า cardSize เข้าไป
             ),
           ),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // ปิด Popup
+                Navigator.of(context).pop();
               },
               child: const Text('ปิด'),
             ),
@@ -95,19 +60,20 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('แสดง Barcode นักศึกษา', textAlign: TextAlign.center),
+          title: const Text('Barcode', textAlign: TextAlign.center),
           content: SingleChildScrollView(
-            child: _buildBarcodeWidget(
-              bc: Barcode.code128(), // ใช้ Barcode.code128() ซึ่งเป็น Barcode 1D ที่นิยมที่สุด
+            child: BarcodeRendererWidget( // ⬅️ เรียกใช้ Widget ใหม่
+              bc: Barcode.code128(),
               data: studentId,
               type: 'BARCODE',
+              cardSize: cardSize, // ส่งค่า cardSize เข้าไป
             ),
           ),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // ปิด Popup
+                Navigator.of(context).pop();
               },
               child: const Text('ปิด'),
             ),
@@ -120,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-
+    // ... (ส่วน build method อื่นๆ ยังคงเดิม)
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(

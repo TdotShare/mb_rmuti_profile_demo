@@ -190,8 +190,7 @@ class _AuthTokenPageState extends State<AuthTokenPage> with SingleTickerProvider
     final size = MediaQuery.of(context).size;
     final double clippedContainerHeight = size.height * 1.15;
 
-    // คำนวณขนาดโลโก้ (กำหนดให้เป็น 50% ของความกว้างหน้าจอ)
-    final double calculatedLogoSize = size.width * 0.5;
+
 
     return Scaffold(
       body: Stack(
