@@ -1,8 +1,8 @@
 // lib/routes/auth_router.dart
 import 'package:flutter/material.dart';
-import 'package:mb_rmuti_profile_demo/features/auth/presentation/auth_token_page.dart';
-import 'package:mb_rmuti_profile_demo/features/auth/presentation/auth_login_officer_page.dart';
-import 'package:mb_rmuti_profile_demo/features/home/presentation/home_page.dart';
+import 'package:mb_rmuti_profile_demo/features/auth/presentation/pages/auth_token_page.dart';
+import 'package:mb_rmuti_profile_demo/features/auth/presentation/pages/auth_login_officer_page.dart';
+import 'package:mb_rmuti_profile_demo/features/home/presentation/pages/home_page.dart';
 
 /// — ชื่อนี้เป็นที่เดียวเก็บชื่อ route ของ auth —
 class AuthRoutes {

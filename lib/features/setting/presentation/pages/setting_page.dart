@@ -1,9 +1,9 @@
 // SettingPage.dart
 
 import 'package:flutter/material.dart';
-
-import '../widgets/setting_profile_header_card_widget.dart';
-
+import 'package:mb_rmuti_profile_demo/features/setting/presentation/widgets/setting_item_label_widget.dart';
+import 'package:mb_rmuti_profile_demo/features/setting/presentation/widgets/setting_profile_header_card_widget.dart';
+import 'package:mb_rmuti_profile_demo/routes/auth_router.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({ Key? key }) : super(key: key);
@@ -20,41 +20,10 @@ class _SettingPageState extends State<SettingPage> {
     print("Select Photo function called.");
   }
 
-  // Widget สำหรับสร้างรายการตั้งค่าแต่ละบรรทัด
-  Widget _buildSettingItem({
-    required String title,
-    Widget? trailing,
-    VoidCallback? onTap,
-  }) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            width: double.infinity,
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Kanit',
-                    color: Colors.black87,
-                  ),
-                ),
-                if (trailing != null) trailing!, // ⬅️ เพิ่ม ! เพื่อยืนยัน Type
-              ],
-            ),
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.only(left: 20, right: 20),
-          child: Divider(height: 0, thickness: 0.5, color: Color(0xFFE0E0E0)),
-        ),
-      ],
+  void _onLogout() {
+    Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
+      AuthRoutes.authToken, // Route ที่ต้องการไป (หน้า Login)
+          (Route<dynamic> route) => false, // ล้าง Stack ทั้งหมด
     );
   }
 
@@ -91,25 +60,55 @@ class _SettingPageState extends State<SettingPage> {
               ),
               child: Column(
                 children: [
-                  _buildSettingItem(
+                  SettingItemLabelWidget(
                     title: 'ติดต่อเรา',
+                    icon: Icons.contact_mail,
                     onTap: () {
                       // Logic สำหรับไปหน้าติดต่อเรา
                     },
                   ),
-                  _buildSettingItem(
+                  SettingItemLabelWidget(
                     title: 'ข้อกำหนดและเงื่อนไข',
+                    icon: Icons.rule,
                     onTap: () {
                       // Logic สำหรับไปหน้าข้อกำหนด
                     },
                   ),
-                  _buildSettingItem(
+                  SettingItemLabelWidget(
                     title: 'เวอร์ชัน 0.0.1',
+                    icon: Icons.verified,
                     onTap: () {},
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 15),
+
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  SettingItemLabelWidget(
+                    title: 'ออกจากระบบ',
+                    icon: Icons.logout,
+                    iconColor: Colors.red,
+                    onTap: _onLogout,
+                  ),
+                ],
+              ),
+            ),
+
 
             const SizedBox(height: 30),
           ],

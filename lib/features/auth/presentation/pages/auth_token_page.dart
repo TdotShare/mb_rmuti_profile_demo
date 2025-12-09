@@ -2,9 +2,8 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
-import 'package:mb_rmuti_profile_demo/features/auth/widgets/auth_applogo_widget.dart';
-import 'package:mb_rmuti_profile_demo/features/auth/widgets/auth_button_section_widget.dart';
+import 'package:mb_rmuti_profile_demo/features/auth/presentation/widgets/auth_applogo_widget.dart';
+import 'package:mb_rmuti_profile_demo/features/auth/presentation/widgets/auth_button_section_widget.dart';
 import 'package:mb_rmuti_profile_demo/routes/app_router.dart';
 import 'package:mb_rmuti_profile_demo/routes/auth_router.dart';
 

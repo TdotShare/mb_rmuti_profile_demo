@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
-// ⬅️ IMPORT 2: นำเข้า Widget ที่แยกออกมา
-import '../../../core/widgets/barcodeRenderer/barcode_renderer_widget.dart';
-import '../widgets/profile_action_buton_widget.dart';
-import '../widgets/profile_info_card_widget.dart';
+import 'package:mb_rmuti_profile_demo/core/widgets/barcodeRenderer/barcode_renderer_widget.dart';
+import 'package:mb_rmuti_profile_demo/features/profile/presentation/widgets/profile_action_buton_widget.dart';
+import 'package:mb_rmuti_profile_demo/features/profile/presentation/widgets/profile_info_card_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({ Key? key }) : super(key: key);
@@ -31,11 +30,11 @@ class _ProfilePageState extends State<ProfilePage> {
         return AlertDialog(
           title: const Text('QR Code', textAlign: TextAlign.center),
           content: SingleChildScrollView(
-            child: BarcodeRendererWidget( // ⬅️ เรียกใช้ Widget ใหม่
+            child: BarcodeRendererWidget(
               bc: Barcode.qrCode(),
               data: studentId,
               type: 'QRCODE',
-              cardSize: cardSize, // ส่งค่า cardSize เข้าไป
+              cardSize: cardSize,
             ),
           ),
           actionsAlignment: MainAxisAlignment.center,
@@ -86,7 +85,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    // ... (ส่วน build method อื่นๆ ยังคงเดิม)
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(

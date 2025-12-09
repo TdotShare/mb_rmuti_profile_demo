@@ -1,9 +1,8 @@
 // lib/features/home/presentation/home_page.dart
 import 'package:flutter/material.dart';
-import 'package:mb_rmuti_profile_demo/features/home/widgets/home_content_widget.dart';
-
-import 'package:mb_rmuti_profile_demo/features/profile/presentation/profile_page.dart';
-import 'package:mb_rmuti_profile_demo/features/setting/presentation/setting_page.dart';
+import 'package:mb_rmuti_profile_demo/features/home/presentation/widgets/home_content_widget.dart';
+import 'package:mb_rmuti_profile_demo/features/profile/presentation/pages/profile_page.dart';
+import 'package:mb_rmuti_profile_demo/features/setting/presentation/pages/setting_page.dart';
 
 /// หน้า Home หลักที่มี BottomNavigationBar คงอยู่ตลอด
 /// แต่ละ tab จะมี Navigator แยกของตัวเอง (preserve state)
