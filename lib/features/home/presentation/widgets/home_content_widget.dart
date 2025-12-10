@@ -1,47 +1,75 @@
+// lib/features/home/presentation/widgets/home_content_widget.dart
+
 import 'package:flutter/material.dart';
+import 'package:mb_rmuti_profile_demo/features/home/data/models/home_user_notification_list_model.dart';
+import 'package:mb_rmuti_profile_demo/features/home/home_controller.dart';
 import 'package:mb_rmuti_profile_demo/features/home/presentation/widgets/home_notif_section_widget.dart';
 import 'package:mb_rmuti_profile_demo/features/home/presentation/widgets/home_side_banner_widget.dart';
 import 'package:mb_rmuti_profile_demo/features/home/presentation/widgets/home_user_profile_card_widget.dart';
 
 class HomeContentWidget extends StatelessWidget {
+  late final HomeController _controller = HomeController(); 
+
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // กำหนดความสูงของพื้นที่สีเทาเข้ม (Banner Area)
-        final double bannerHeightRatio = 0.40;
-        final double bannerHeight = constraints.maxHeight * bannerHeightRatio;
+    // ลบ Scaffold ออกไป ใช้ Container ธรรมดาแทน
+    return Container( // <--- ไม่ใช้ Scaffold!
+      color: const Color(0xFFF7F7F7), // พื้นหลังหลัก
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final double bannerHeightRatio = 0.40;
+          final double bannerHeight = constraints.maxHeight * bannerHeightRatio;
+          const double infoCardHeight = 130.0;
+          const double overlapDistance = 40.0; 
+          
+          // คำนวณ Top Offset ที่เป็นจุดเริ่มต้นของ Notification Section
+          // ตำแหน่งนี้คือ (ปลาย Banner - ระยะ Overlap) + ความสูง Card
+          final double notifSectionTopOffset = (bannerHeight - overlapDistance) + infoCardHeight + 15; 
 
-        // กำหนดความสูงของพื้นที่ข้อมูล (Info Card Area)
-        const double infoCardHeight = 130.0;
-        // ระยะห่างรวมที่ต้องการให้ Info Card อยู่เหนือ Banner (Overlap)
-        const double overlapDistance = 40.0; // กำหนดระยะ Overlap ที่ต้องการ
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // 1. Banner (อยู่ล่างสุด)
+              HomeSideBannerWidget(bannerHeight: bannerHeight),
 
-        final double notiInfoCardHeight = ( bannerHeight - overlapDistance ) + 155.0;
+              // 2. Info Card (อยู่ด้านบน)
+              HomeUserProfileCardWidget(
+                  // overlapSize คือ Top ของ Card
+                  overlapSize: bannerHeight - overlapDistance,
+                  infoCardHeight: infoCardHeight),
 
-        return Scaffold(
-          body: Container(
-            color: const Color(0xFFF7F7F7), // พื้นหลังหลัก
-            // ใช้ Stack เพื่อให้ Info Card วางซ้อนและ Overlap กับ Banner ได้
-            child: Stack(
-              clipBehavior:
-                  Clip.none, // อนุญาตให้ Widget ออกนอกขอบเขตของ Stack ได้
-              children: [
-
-                // 1. พื้นที่ Banner (สีเทาเข้ม) - ต้องอยู่ด้านล่างสุดใน Stack
-                HomeSideBannerWidget(bannerHeight: bannerHeight),
-
-                // 2. พื้นที่สำหรับ Info Card (สีเทาอ่อน) - ต้องอยู่ด้านบน
-                HomeUserProfileCardWidget( overlapSize : bannerHeight - overlapDistance, infoCardHeight: infoCardHeight,),
-
-                // 3. พื้นที่สำหรับ การแจ้งเตือน
-                HomeNotifSectionWidget(notiInfoCardHeight : notiInfoCardHeight)
-
-              ],
-            ),
-          ),
-        );
-      },
+              // 3. พื้นที่สำหรับ การแจ้งเตือน (Positioned.fill เพื่อใช้พื้นที่ที่เหลือ)
+              Positioned.fill(
+                top: notifSectionTopOffset, 
+                // เนื่องจากห่อด้วย SafeArea ใน HomePage แล้ว จึงไม่จำเป็นต้องกำหนด bottom:
+                child: FutureBuilder<List<HomeUserNotificationListModel>>(
+                  future: _controller.getNotificationList(), 
+                  builder: (context, snapshot) {
+                    
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    }
+                    
+                    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                      final notifications = snapshot.data!;
+                      
+                      return HomeNotifSectionWidget(
+                        notifications: notifications, 
+                      );
+                    }
+                    
+                    return const Center(child: Text('ไม่มีการแจ้งเตือน'));
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

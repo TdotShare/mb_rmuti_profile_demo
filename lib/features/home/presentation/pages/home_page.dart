@@ -28,7 +28,11 @@ class _HomePageState extends State<HomePage> {
   Widget _buildOffstageNavigator(int index) {
     late Widget child;
     if (index == 0) {
-      child = HomeContentWidget();
+      // **สำคัญ:** ห่อด้วย SafeArea เพื่อให้ HomeContentWidget ไม่ไปทับ StatusBar/BottomBar
+      child = SafeArea(
+        top: false, // อนุญาตให้ Banner ขึ้นไปถึง StatusBar (ถ้ามี)
+        child: HomeContentWidget(),
+      );
     } else if (index == 1) {
       child = const ProfilePage();
     } else {
