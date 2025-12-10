@@ -1,14 +1,19 @@
 // lib/routes/app_router.dart
 import 'package:flutter/material.dart';
 
+
+
 // นำเข้ารายการ route map ของแต่ละ feature
-import 'auth_router.dart';
+import 'package:mb_rmuti_profile_demo/routes/auth_router.dart';
+import 'package:mb_rmuti_profile_demo/routes/service_access_router.dart';
+
 
 /// รวม routes จากทุก router ย่อยเป็น map เดียว
 class AppRouter {
   // เก็บ map ของทั้งหมด
   static final Map<String, WidgetBuilder> _routes = {
     ...AuthRouter.routes,
+    ...ServiceAccessRouter.routes,
   };
 
   /// เรียกใช้จาก MaterialApp.onGenerateRoute

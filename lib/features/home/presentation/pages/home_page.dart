@@ -1,8 +1,10 @@
 // lib/features/home/presentation/home_page.dart
 import 'package:flutter/material.dart';
-import 'package:mb_rmuti_profile_demo/features/home/presentation/widgets/home_content_widget.dart';
+// ลบ HomeContentWidget, ServiceAccessPage ออก (ถูกจัดการใน HomeTabRouter)
 import 'package:mb_rmuti_profile_demo/features/profile/presentation/pages/profile_page.dart';
 import 'package:mb_rmuti_profile_demo/features/setting/presentation/pages/setting_page.dart';
+// 🚀 เพิ่ม HomeTabRouter เข้ามา
+import 'package:mb_rmuti_profile_demo/routes/home_tab_router.dart'; 
 
 /// หน้า Home หลักที่มี BottomNavigationBar คงอยู่ตลอด
 /// แต่ละ tab จะมี Navigator แยกของตัวเอง (preserve state)
@@ -24,28 +26,30 @@ class _HomePageState extends State<HomePage> {
     GlobalKey<NavigatorState>(), // Setting
   ];
 
+  // ❌ ลบ _homeRouteBuilder ออกไป
+
   // สร้าง list ของ widget navigator (Offstage approach)
   Widget _buildOffstageNavigator(int index) {
-    late Widget child;
+    // กำหนด RouteSettings และ Builder สำหรับแต่ละ Tab
+    const RouteSettings initialSettings = RouteSettings(name: '/');
+    RouteFactory routeFactory;
+
     if (index == 0) {
-      // **สำคัญ:** ห่อด้วย SafeArea เพื่อให้ HomeContentWidget ไม่ไปทับ StatusBar/BottomBar
-      child = SafeArea(
-        top: false, // อนุญาตให้ Banner ขึ้นไปถึง StatusBar (ถ้ามี)
-        child: HomeContentWidget(),
-      );
+      // 🚀 ใช้ HomeTabRouter.generateRoute สำหรับ Tab Home (Index 0)
+      routeFactory = HomeTabRouter.generateRoute;
     } else if (index == 1) {
-      child = const ProfilePage();
+      // สำหรับ Tab อื่นๆ ใช้ builder เดิม
+      routeFactory = (settings) => MaterialPageRoute(builder: (_) => const ProfilePage(), settings: settings);
     } else {
-      child = const SettingPage();
+      routeFactory = (settings) => MaterialPageRoute(builder: (_) => const SettingPage(), settings: settings);
     }
 
     return Offstage(
       offstage: _currentIndex != index,
       child: Navigator(
         key: _navigatorKeys[index],
-        onGenerateRoute: (RouteSettings settings) {
-          return MaterialPageRoute(builder: (_) => child, settings: settings);
-        },
+        initialRoute: initialSettings.name, // กำหนด Route เริ่มต้น '/'
+        onGenerateRoute: routeFactory, // ใช้งาน Route Factory ที่กำหนด
       ),
     );
   }

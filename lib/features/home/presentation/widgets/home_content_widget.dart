@@ -8,7 +8,8 @@ import 'package:mb_rmuti_profile_demo/features/home/presentation/widgets/home_si
 import 'package:mb_rmuti_profile_demo/features/home/presentation/widgets/home_user_profile_card_widget.dart';
 
 class HomeContentWidget extends StatelessWidget {
-  late final HomeController _controller = HomeController(); 
+
+  late final HomeController _controller = HomeController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +35,7 @@ class HomeContentWidget extends StatelessWidget {
 
               // 2. Info Card (อยู่ด้านบน)
               HomeUserProfileCardWidget(
+                  btnServiceAccess: () => _controller.btnServiceAccess(context),
                   // overlapSize คือ Top ของ Card
                   overlapSize: bannerHeight - overlapDistance,
                   infoCardHeight: infoCardHeight),

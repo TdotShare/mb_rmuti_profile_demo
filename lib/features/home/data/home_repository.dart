@@ -9,8 +9,8 @@ class HomeRepository {
     await Future.delayed(const Duration(seconds: 1)); // <--- เพิ่มบรรทัดนี้
 
     return [
-      HomeUserNotificationListModel(title: "Alert 1", detail: "Detail 1"),
-      HomeUserNotificationListModel(title: "Alert 2", detail: "Detail 2"),
+      HomeUserNotificationListModel(title: "แจ้งดำเนินการปิดปรับปรุง APP", detail: "เพื่อพัฒนาระบบให้ดียิ่งขึ้นจะทำการปิดปรับปรุง เวลา 20.00 น. วันที่ 9 ส.ค 68 เวลา 00.00 - 08.00 น."),
+      HomeUserNotificationListModel(title: "ดำเนินการแจ้งการเปิดพื้นที่", detail: "เมื่อวันที่ XX ส.ค 68 คุณได้ส่งคำขอเปิดพื้นที่ faculty-ait ทางทีมงานเครือข่ายได้ดำเนินการเรียบร้อย"),
     ];
   }
   

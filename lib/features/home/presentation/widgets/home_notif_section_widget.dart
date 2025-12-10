@@ -21,7 +21,7 @@ class HomeNotifSectionWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text( 
-            'การแจ้งเตือนจากระบบ !',
+            'การแจ้งเตือนจากระบบ',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
@@ -36,7 +36,7 @@ class HomeNotifSectionWidget extends StatelessWidget {
                 final notification = notifications[index];
                 return Card(
                   child: ListTile(
-                    leading: const Icon(Icons.notifications),
+                    leading: const Icon(Icons.info),
                     title: Text(notification.title),
                     subtitle: Text(notification.detail),
                     onTap: () {

@@ -4,12 +4,13 @@ class HomeUserProfileCardWidget extends StatelessWidget {
 
   final double overlapSize;
   final double infoCardHeight;
+  final VoidCallback btnServiceAccess;
 
   const HomeUserProfileCardWidget({
         super.key,
         required this.overlapSize,
         required this.infoCardHeight,
-
+        required this.btnServiceAccess
       });
 
   @override
@@ -60,9 +61,7 @@ class HomeUserProfileCardWidget extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   ElevatedButton(
-                    onPressed: () {
-                      print("ดูบริการที่เข้าถึงได้ถูกกด");
-                    },
+                    onPressed: btnServiceAccess,
                     child: const Text('ดูบริการที่เข้าถึงได้'),
                   )
                 ],

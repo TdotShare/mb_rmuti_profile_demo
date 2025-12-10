@@ -85,6 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(
@@ -103,12 +104,12 @@ class _ProfilePageState extends State<ProfilePage> {
               // 1. ส่วนบัตรนักศึกษา
               const ProfileInfoCardWidget(),
 
-              SizedBox(height: screenHeight * 0.10),
+              SizedBox(height: screenHeight * 0.05),
 
               // 2. ปุ่ม QRCODE และ BARCODE
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Column(
+              SizedBox(
+                width: screenWidth * 0.90,
+                 child: Column(
                   children: [
                     ProfileActionButonWidget(
                       title: 'QRCODE',
@@ -123,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ],
                 ),
-              ),
+              )
             ],
           ),
         ),
