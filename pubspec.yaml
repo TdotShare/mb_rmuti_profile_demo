@@ -19,6 +19,8 @@ dependencies:
   dio: ^5.9.0
   barcode: ^2.2.9
   barcode_widget: ^2.0.4
+  webview_flutter: ^4.13.0
+  shared_preferences: ^2.5.4
 
 dev_dependencies:
   flutter_test:

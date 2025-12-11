@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:mb_rmuti_profile_demo/features/auth/presentation/pages/auth_oauth.dart';
 import 'package:mb_rmuti_profile_demo/features/auth/presentation/widgets/auth_applogo_widget.dart';
 import 'package:mb_rmuti_profile_demo/features/auth/presentation/widgets/auth_button_section_widget.dart';
 import 'package:mb_rmuti_profile_demo/routes/app_router.dart';
@@ -176,8 +177,26 @@ class _AuthTokenPageState extends State<AuthTokenPage> with SingleTickerProvider
     super.dispose();
   }
 
-  void _onPressedSso() {
-    debugPrint('SSO pressed');
+  void _onPressedSso(BuildContext context) async {
+    // 1. เรียก AppRouter.push โดยกำหนด Type ของค่าที่คาดหวังคือ Map<String, String>?
+    final result = await AppRouter.pushAuthOauth(context);
+
+    // 2. ตรวจสอบและจัดการผลลัพธ์
+    if (result != null) {
+
+      final code = result['code'];
+      final type = result['type'];
+
+      debugPrint('🎉 การเข้าสู่ระบบ OAuth สำเร็จ!');
+      debugPrint('ได้รับ Code: $code');
+      debugPrint('ได้รับ Type: $type');
+
+      // **ขั้นตอนต่อไป:** นำทางไปยังหน้าหลัก หรือทำขั้นตอนแลก Access Token
+      // เช่น: AppRouter.pushReplacement(context, AuthRoutes.home);
+
+    } else {
+      debugPrint('❌ การเข้าสู่ระบบ OAuth ถูกยกเลิกหรือไม่สำเร็จ');
+    }
   }
 
   void _onPressedOfficer() {
@@ -247,9 +266,9 @@ class _AuthTokenPageState extends State<AuthTokenPage> with SingleTickerProvider
                           SliverFadeTransition(
                             animation: _animation,
                             child: AuthButtonSectionWidget(
-                              btnLoginOfficer: 1,
-                              btnLoginSso: 1,
-                              voidBtnLoginSso: _onPressedSso,
+                              voidBtnLoginSso: () {
+                                _onPressedSso(context);
+                              },
                               voidBtnLoginOfficer: _onPressedOfficer,
                             ),
                           )

@@ -1,24 +1,25 @@
-// auth_button_section_widget.dart
 import 'package:flutter/material.dart';
 
 class AuthButtonSectionWidget extends StatelessWidget {
-  final int btnLoginSso;
-  final int btnLoginOfficer;
+  // ลบตัวแปร int ที่ไม่ได้ใช้ในการ build ออก
+  // final int btnLoginSso; 
+  // final int btnLoginOfficer;
 
+  // คงไว้แค่ callback ที่ใช้
   final VoidCallback voidBtnLoginSso;
   final VoidCallback voidBtnLoginOfficer;
 
   const AuthButtonSectionWidget({
     super.key,
-    required this.btnLoginSso,
-    required this.btnLoginOfficer,
+    // ไม่ต้อง required ตัวแปรที่ถูกลบไปแล้ว
+    // required this.btnLoginSso,
+    // required this.btnLoginOfficer,
     required this.voidBtnLoginSso,
     required this.voidBtnLoginOfficer,
   });
 
   @override
   Widget build(BuildContext context) {
-    // ใช้ Theme ของปุ่มจาก ThemeData ที่เรากำหนดไว้ (หรือ override ที่นี่)
     return Center(
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.85,
@@ -27,13 +28,13 @@ class AuthButtonSectionWidget extends StatelessWidget {
           children: [
             const SizedBox(height: 12),
             ElevatedButton(
-              onPressed: voidBtnLoginSso,
+              onPressed: voidBtnLoginSso, // กำหนด callback
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF8A00), // สีปุ่ม
-                foregroundColor: Colors.white, // สีข้อความ (icon/text)
+                backgroundColor: const Color(0xFFFF8A00),
+                foregroundColor: Colors.white,
                 textStyle: const TextStyle(
                   fontFamily: 'Kanit',
-                  fontWeight: FontWeight.bold, // ตัวหนา
+                  fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
@@ -44,12 +45,11 @@ class AuthButtonSectionWidget extends StatelessWidget {
               child: const Text(
                 "เข้าสู่ระบบด้วย SSO RMUTI",
                 textAlign: TextAlign.center,
-
               ),
             ),
             const SizedBox(height: 12),
             ElevatedButton(
-              onPressed: voidBtnLoginOfficer,
+              onPressed: voidBtnLoginOfficer, // กำหนด callback
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFFF8A00),
                 foregroundColor: Colors.white,

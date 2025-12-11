@@ -1,5 +1,6 @@
 // lib/routes/app_router.dart
 import 'package:flutter/material.dart';
+import 'package:mb_rmuti_profile_demo/features/auth/presentation/pages/auth_oauth.dart';
 
 
 
@@ -23,6 +24,11 @@ class AppRouter {
     // หา widget builder จาก map
     final builder = _routes[name];
     if (builder != null) {
+      // 💡 จุดที่แก้ไข: เราต้องใช้ RouteSettings.arguments เพื่อระบุ Type ให้กับ Route
+      // ถ้า settings.arguments มีค่า (ซึ่งไม่มีในกรณีนี้) จะใช้ค่า dynamic แทน
+      // สิ่งที่สำคัญคือการส่ง settings เข้าไปใน MaterialPageRoute
+
+      // เราจะ Cast settings ให้เป็น RouteSettings<T> เพื่อให้ Navigator รู้จัก Type
       return MaterialPageRoute(
         builder: (context) => builder(context),
         settings: settings,
@@ -53,4 +59,16 @@ class AppRouter {
   static Future<T?> push<T>(BuildContext context, String routeName, {Object? arguments}) {
     return Navigator.of(context).pushNamed<T>(routeName, arguments: arguments);
   }
+
+  // 💡 NEW: Helper Method สำหรับ AuthOauth โดยเฉพาะ เพื่อรับค่ากลับแบบ Strong-typed
+  static Future<Map<String, String>?> pushAuthOauth(BuildContext context) {
+    return Navigator.of(context).push<Map<String, String>?>(
+      MaterialPageRoute(
+        builder: (context) => const AuthOauthPage(),
+        // ใช้งานชื่อ route เดิมเพื่อประโยชน์ในการ Debugging/Monitoring (ถ้ามี)
+        settings: const RouteSettings(name: AuthRoutes.authOauth),
+      ),
+    );
+  }
+
 }
