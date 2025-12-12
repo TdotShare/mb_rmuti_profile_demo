@@ -14,42 +14,33 @@ class AuthRepository {
   AuthRepository(this._ref); // Constructor รับ Ref
 
   void onPressedSso(BuildContext context) async {
-
     final result = await AppRouter.pushAuthOauth(context);
-
     if (result != null) {
-
       final code = result['code'];
-      //final type = result['type'];
+      onCheckTokenLogin(context , code!);
+    }
+  }
+
+  void onCheckTokenLogin(BuildContext context, String code) async {
+    if (code != "") {
 
       final Dio dio = Dio();
 
       try {
-
         final Response response = await dio.get(
           'https://api.rmuti.ac.th/api/v3/me',
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer $code',
-            },
-          ),
+          options: Options(headers: {'Authorization': 'Bearer $code'}),
         );
 
         if (response.statusCode == 200) {
 
-          print("Data: ${response.data}");
-
-          // **4. โค้ดใหม่: อัปเดต UserProfileState**
           final Map<String, dynamic> userData = response.data;
 
-          // อ่าน Notifier เพื่อเรียกใช้เมธอด
           final userProfileNotifier = _ref.read(userProfileProvider.notifier);
 
-          // เรียกเมธอด fetchAndSetProfile เพื่ออัปเดตสถานะ
           await userProfileNotifier.fetchAndSetProfile(userData);
 
-          AppRouter.pushReplacement(context , AuthRoutes.home);
-
+          AppRouter.pushReplacement(context, AuthRoutes.home);
         } else {
           print("API Call Failed with status code: ${response.statusCode}");
         }

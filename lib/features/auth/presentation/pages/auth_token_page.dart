@@ -4,11 +4,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mb_rmuti_profile_demo/features/auth/auth_controller.dart';
-import 'package:mb_rmuti_profile_demo/features/auth/presentation/pages/auth_oauth.dart';
 import 'package:mb_rmuti_profile_demo/features/auth/presentation/widgets/auth_applogo_widget.dart';
 import 'package:mb_rmuti_profile_demo/features/auth/presentation/widgets/auth_button_section_widget.dart';
 import 'package:mb_rmuti_profile_demo/routes/app_router.dart';
 import 'package:mb_rmuti_profile_demo/routes/auth_router.dart';
+import 'package:flutter/foundation.dart';
+import 'package:web/web.dart' as web;
 
 // SliverFadeTransition: wrapper สำหรับ FadeTransition
 class SliverFadeTransition extends StatelessWidget {
@@ -23,10 +24,7 @@ class SliverFadeTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: animation,
-      child: child,
-    );
+    return FadeTransition(opacity: animation, child: child);
   }
 }
 
@@ -37,16 +35,22 @@ class WhiteWaveClipper extends CustomClipper<Path> {
     final path = Path();
     path.moveTo(0, 0);
     path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height * 0.55); // ปรับจาก 0.60
+    path.lineTo(size.width, size.height * 0.60); // ปรับจาก 0.60
 
-    final controlPoint1 = Offset(size.width * 0.75, size.height * 0.55); // ปรับจาก 0.60
+    final controlPoint1 = Offset(
+      size.width * 0.75,
+      size.height * 0.55,
+    ); // ปรับจาก 0.60
     final controlPoint2 = Offset(size.width * 0.10, size.height * 0.95);
-    final endPoint = Offset(0, size.height * 0.60); // ปรับจาก 0.65
+    final endPoint = Offset(0, size.height * 0.65); // ปรับจาก 0.65
 
     path.cubicTo(
-      controlPoint1.dx, controlPoint1.dy,
-      controlPoint2.dx, controlPoint2.dy,
-      endPoint.dx, endPoint.dy,
+      controlPoint1.dx,
+      controlPoint1.dy,
+      controlPoint2.dx,
+      controlPoint2.dy,
+      endPoint.dx,
+      endPoint.dy,
     );
 
     path.lineTo(0, 0);
@@ -65,16 +69,22 @@ class BackWaveClipper extends CustomClipper<Path> {
     final path = Path();
     path.moveTo(0, 0);
     path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height * 0.57); // ปรับจาก 0.62
+    path.lineTo(size.width, size.height * 0.62); // ปรับจาก 0.62
 
-    final controlPoint1 = Offset(size.width * 0.75, size.height * 0.57); // ปรับจาก 0.62
+    final controlPoint1 = Offset(
+      size.width * 0.75,
+      size.height * 0.57,
+    ); // ปรับจาก 0.62
     final controlPoint2 = Offset(size.width * 0.10, size.height * 0.97);
-    final endPoint = Offset(0, size.height * 0.62); // ปรับจาก 0.67
+    final endPoint = Offset(0, size.height * 0.67); // ปรับจาก 0.67
 
     path.cubicTo(
-      controlPoint1.dx, controlPoint1.dy,
-      controlPoint2.dx, controlPoint2.dy,
-      endPoint.dx, endPoint.dy,
+      controlPoint1.dx,
+      controlPoint1.dy,
+      controlPoint2.dx,
+      controlPoint2.dy,
+      endPoint.dx,
+      endPoint.dy,
     );
 
     path.lineTo(0, 0);
@@ -93,9 +103,8 @@ class AuthTokenPage extends ConsumerStatefulWidget {
   ConsumerState<AuthTokenPage> createState() => _AuthTokenPageState();
 }
 
-class _AuthTokenPageState extends ConsumerState<AuthTokenPage> with SingleTickerProviderStateMixin {
-
-
+class _AuthTokenPageState extends ConsumerState<AuthTokenPage>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _animation;
   bool _isLoaded = false;
@@ -107,9 +116,7 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage> with SingleTicker
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       // ถ้าต้องการ headers ใช้ options
-      headers: {
-        'Accept': 'application/json',
-      },
+      headers: {'Accept': 'application/json'},
     ),
   );
 
@@ -125,52 +132,54 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage> with SingleTicker
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
 
     // เริ่มโหลด API
-    _fetchApiWithDio();
+    _checkUrlAndFetchApi();
+    ();
   }
 
-  Future<void> _fetchApiWithDio() async {
-    const url = 'https://pokeapi.co/api/v2/pokemon-form/132/';
-    setState(() {
-      _isLoaded = false;
-      _hasError = false;
-    });
+  Future<void> _checkUrlAndFetchApi() async {
+    // 1. ตรวจสอบว่าเป็น Web
+    if (kIsWeb) {
+      // ดึง URL ปัจจุบันจากเบราว์เซอร์
+      // ต้องแน่ใจว่าได้ import 'package:web/web.dart' as web; แล้ว
+      String currentUrl = web.window.location.href; 
+      Uri uri = Uri.parse(currentUrl);
+      String? authCode = uri.queryParameters['code'];
 
-    try {
-      final response = await _dio.get(url);
-      // Dio returns Response with statusCode
-      if (response.statusCode == 200) {
-        // (ถ้าต้องการ) parse response.data
-        // final data = response.data;
+      if (authCode != null) {
+        // **A. ถ้ามี code อยู่: โยนเข้า AuthController และหยุดหมุน**
+        debugPrint('Found SSO Code: $authCode');
+        final _auth_controller = ref.read(authControllerProvider);
+
+        // (การทำงาน: แลก Code เป็น Token และ Navigate)
+        _auth_controller.onCheckTokenLogin(context, authCode);
+
+        // หยุดโหลดและหมุน (ถือว่า "โหลดเสร็จ" แล้ว)
         if (!mounted) return;
         setState(() {
           _isLoaded = true;
           _hasError = false;
         });
         _controller.forward();
+        
+        // เมื่อจัดการ code เสร็จแล้ว ให้หยุดทำงาน
+        return; 
+
       } else {
-        // กรณี status != 200
+        // **B. ถ้าเป็น Web แต่ authCode เป็น null (เปิดหน้าโดยตรง)**
+        debugPrint('Web platform: No SSO code found. Stopping initial loading animation.');
+        
+        // หยุดโหลดและหมุนทันที (ถือว่า "โหลดเสร็จ" แล้ว)
+        
         if (!mounted) return;
         setState(() {
-          _hasError = true;
+          _isLoaded = true;
+          _hasError = false;
         });
+        _controller.forward();
+        
+        // **และไม่ต้องไปเรียก _fetchApiWithDio() ต่อ**
+        return; 
       }
-    } on DioException catch (dioErr) {
-      // แยกกรณี error ให้ชัดเจน ถ้าต้องการ debug สามารถ inspect dioErr.type / dioErr.response
-      debugPrint('DioException: ${dioErr.type} - ${dioErr.message}');
-      if (dioErr.response != null) {
-        debugPrint('Dio response status: ${dioErr.response?.statusCode}');
-        debugPrint('Dio response data: ${dioErr.response?.data}');
-      }
-      if (!mounted) return;
-      setState(() {
-        _hasError = true;
-      });
-    } catch (e) {
-      debugPrint('Unexpected error: $e');
-      if (!mounted) return;
-      setState(() {
-        _hasError = true;
-      });
     }
   }
 
@@ -187,7 +196,6 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
-
     final _auth_controller = ref.read(authControllerProvider);
     final size = MediaQuery.of(context).size;
     final double clippedContainerHeight = size.height * 1.15;
@@ -239,7 +247,7 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage> with SingleTicker
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 160),
+                        SizedBox(height: size.height * 0.12),
                         // ส่ง calculatedLogoSize เข้าไป
                         AuthAppLogoWidget(),
 
@@ -249,7 +257,11 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage> with SingleTicker
                             animation: _animation,
                             child: AuthButtonSectionWidget(
                               voidBtnLoginSso: () {
-                                _auth_controller.onPressedSso(context);
+                                if (kIsWeb) {
+                                  _auth_controller.onPressedSsoToWeb();
+                                } else {
+                                  _auth_controller.onPressedSso(context);
+                                }
                               },
                               voidBtnLoginOfficer: _onPressedOfficer,
                             ),
@@ -311,7 +323,6 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage> with SingleTicker
                       setState(() {
                         _hasError = false;
                       });
-                      _fetchApiWithDio();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF8A00),

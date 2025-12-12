@@ -107,7 +107,7 @@ class SettingProfileHeaderCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 1. รูปโปรไฟล์และปุ่มถ่ายรูป
+              // 1. รูปโปรไฟล์และปุ่มถ่ายรูป (Fixed Width)
               Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -142,28 +142,36 @@ class SettingProfileHeaderCard extends StatelessWidget {
 
               const SizedBox(width: 15),
 
-              // 2. ข้อมูลผู้ใช้
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$disPlayFirstName $disPlayLastName',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Kanit',
+              // 2. ข้อมูลผู้ใช้ (Flexible Width)
+              // ⭐️⭐️ ห่อหุ้มด้วย Expanded เพื่อให้ใช้พื้นที่ที่เหลือทั้งหมด ⭐️⭐️
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // เพิ่มเพื่อความชัดเจน (optional)
+                  children: [
+                    Text(
+                      '$disPlayFirstName $disPlayLastName',
+                      overflow: TextOverflow.ellipsis, // ⭐️ เพิ่มการตัดคำ ⭐️
+                      maxLines: 1,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Kanit',
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    disPlayFacName,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                      fontFamily: 'Kanit',
+                    const SizedBox(height: 2),
+                    Text(
+                      disPlayFacName,
+                      overflow: TextOverflow.ellipsis, // ⭐️ เพิ่มการตัดคำ ⭐️
+                      maxLines: 1,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                        fontFamily: 'Kanit',
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
