@@ -22,6 +22,7 @@ class ServiceAccessItemLabelWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.white,
       // margin: EdgeInsets.zero, // สามารถลบ margin ของ Card ได้ถ้าต้องการชิดขอบ
       child: ListTile(
         // ⭐️ 1. ใช้ Icon/Leading (ถ้ามี) ⭐️

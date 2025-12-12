@@ -26,11 +26,14 @@ class _AuthLoginOfficerPageState extends State<AuthLoginOfficerPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final size = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: SingleChildScrollView( // ⬅️ เพิ่ม SingleChildScrollView เพื่อรองรับหน้าจอขนาดเล็ก
         child: Column(
           children: [
-            const SizedBox(height: 50), // ⬅️ ลดระยะห่างด้านบน
+            SizedBox(height: size * 0.1), // ⬅️ ลดระยะห่างด้านบน
             const AuthAppLogoWidget(),
             AuthLoginFormWidget(
               onSubmit: (username, password) => login(username, password),

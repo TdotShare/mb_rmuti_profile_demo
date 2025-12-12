@@ -35,12 +35,13 @@ class HomeNotifSectionWidget extends StatelessWidget {
               itemBuilder: (context, index) {
                 final notification = notifications[index];
                 return Card(
+                  color: Colors.white,
                   child: ListTile(
                     leading: const Icon(Icons.info),
                     title: Text(notification.title),
                     subtitle: Text(notification.detail),
                     onTap: () {
-                      // Action เมื่อคลิก
+
                     },
                   ),
                 );

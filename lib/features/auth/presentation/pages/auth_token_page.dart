@@ -2,6 +2,8 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mb_rmuti_profile_demo/features/auth/auth_controller.dart';
 import 'package:mb_rmuti_profile_demo/features/auth/presentation/pages/auth_oauth.dart';
 import 'package:mb_rmuti_profile_demo/features/auth/presentation/widgets/auth_applogo_widget.dart';
 import 'package:mb_rmuti_profile_demo/features/auth/presentation/widgets/auth_button_section_widget.dart';
@@ -84,14 +86,16 @@ class BackWaveClipper extends CustomClipper<Path> {
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) => true;
 }
 
-class AuthTokenPage extends StatefulWidget {
+class AuthTokenPage extends ConsumerStatefulWidget {
   const AuthTokenPage({super.key});
 
   @override
-  State<AuthTokenPage> createState() => _AuthTokenPageState();
+  ConsumerState<AuthTokenPage> createState() => _AuthTokenPageState();
 }
 
-class _AuthTokenPageState extends State<AuthTokenPage> with SingleTickerProviderStateMixin {
+class _AuthTokenPageState extends ConsumerState<AuthTokenPage> with SingleTickerProviderStateMixin {
+
+
   late final AnimationController _controller;
   late final Animation<double> _animation;
   bool _isLoaded = false;
@@ -177,38 +181,16 @@ class _AuthTokenPageState extends State<AuthTokenPage> with SingleTickerProvider
     super.dispose();
   }
 
-  void _onPressedSso(BuildContext context) async {
-    // 1. เรียก AppRouter.push โดยกำหนด Type ของค่าที่คาดหวังคือ Map<String, String>?
-    final result = await AppRouter.pushAuthOauth(context);
-
-    // 2. ตรวจสอบและจัดการผลลัพธ์
-    if (result != null) {
-
-      final code = result['code'];
-      final type = result['type'];
-
-      debugPrint('🎉 การเข้าสู่ระบบ OAuth สำเร็จ!');
-      debugPrint('ได้รับ Code: $code');
-      debugPrint('ได้รับ Type: $type');
-
-      // **ขั้นตอนต่อไป:** นำทางไปยังหน้าหลัก หรือทำขั้นตอนแลก Access Token
-      // เช่น: AppRouter.pushReplacement(context, AuthRoutes.home);
-
-    } else {
-      debugPrint('❌ การเข้าสู่ระบบ OAuth ถูกยกเลิกหรือไม่สำเร็จ');
-    }
-  }
-
   void _onPressedOfficer() {
     AppRouter.push(context, AuthRoutes.authLoginOfficer);
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final _auth_controller = ref.read(authControllerProvider);
     final size = MediaQuery.of(context).size;
     final double clippedContainerHeight = size.height * 1.15;
-
-
 
     return Scaffold(
       body: Stack(
@@ -267,7 +249,7 @@ class _AuthTokenPageState extends State<AuthTokenPage> with SingleTickerProvider
                             animation: _animation,
                             child: AuthButtonSectionWidget(
                               voidBtnLoginSso: () {
-                                _onPressedSso(context);
+                                _auth_controller.onPressedSso(context);
                               },
                               voidBtnLoginOfficer: _onPressedOfficer,
                             ),

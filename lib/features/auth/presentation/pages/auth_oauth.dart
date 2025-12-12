@@ -116,6 +116,7 @@ class _AuthOauthPage extends State<AuthOauthPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white70,
         title: const Text("RMUTI OAuth"),
         centerTitle: true,
       ),

@@ -1,9 +1,27 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
-import 'routes/app_router.dart'; // import แบบ relative path
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:device_preview/device_preview.dart';
+import 'routes/app_router.dart';
 
 void main() {
-  runApp(const MyApp());
+  // **2. ห่อหุ้มแอปด้วย DevicePreview**
+  runApp(
+    DevicePreview(
+      // เปิดใช้งาน DevicePreview
+      enabled: true,
+
+      // แสดงเครื่องมือ Default Tools เช่น การเปลี่ยนอุปกรณ์, Orientation, Theme
+      tools: const [
+        ...DevicePreview.defaultTools,
+      ],
+
+      // Builder ที่ใช้สำหรับห่อหุ้ม Widget หลักของแอป
+      builder: (context) => const ProviderScope(
+        child: MyApp(),
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,7 +29,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 3. ใช้ DevicePreview.appBuilder และ DevicePreview.locale
     return MaterialApp(
+      // ต้องใส่ 2 บรรทัดนี้เพื่อให้ DevicePreview ทำงานได้ถูกต้อง
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
+
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -26,11 +49,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-
-      // initial route (หน้าแรกของแอป)
       initialRoute: '/',
-
-      // ใช้ onGenerateRoute จาก AppRouter
       onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }

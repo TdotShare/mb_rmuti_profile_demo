@@ -1,37 +1,32 @@
 // SettingPage.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mb_rmuti_profile_demo/core/store/notifier/user_profile_notifier.dart';
 import 'package:mb_rmuti_profile_demo/features/setting/presentation/widgets/setting_item_label_widget.dart';
 import 'package:mb_rmuti_profile_demo/features/setting/presentation/widgets/setting_profile_header_card_widget.dart';
+import 'package:mb_rmuti_profile_demo/features/setting/setting_controller.dart';
 import 'package:mb_rmuti_profile_demo/routes/auth_router.dart';
 
-class SettingPage extends StatefulWidget {
+class SettingPage extends ConsumerStatefulWidget {
   const SettingPage({ Key? key }) : super(key: key);
 
   @override
   _SettingPageState createState() => _SettingPageState();
 }
 
-class _SettingPageState extends State<SettingPage> {
-
-  // ฟังก์ชันสำหรับเลือกรูปภาพ - ยังไม่มี Logic ใดๆ
-  void _selectPhoto() {
-    // สามารถใส่ Logic สำหรับเปิด Gallery หรือ Camera ได้ที่นี่
-    print("Select Photo function called.");
-  }
-
-  void _onLogout() {
-    Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
-      AuthRoutes.authToken, // Route ที่ต้องการไป (หน้า Login)
-          (Route<dynamic> route) => false, // ล้าง Stack ทั้งหมด
-    );
-  }
+class _SettingPageState extends ConsumerState<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final _controller = ref.read(settingControllerProvider);
+    final profile = ref.watch(userProfileProvider);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F7),
+      backgroundColor: Colors.white70,
       appBar: AppBar(
+        backgroundColor: Colors.white70,
         title: const Text(
           'ตั้งค่า',
           style: TextStyle(fontFamily: 'Kanit', fontWeight: FontWeight.bold),
@@ -42,7 +37,13 @@ class _SettingPageState extends State<SettingPage> {
         child: Column(
           children: [
             // 1. ส่วน Header Card (ปรับปรุง Responsiveness ใน setting_profile_header_card.dart แล้ว)
-            SettingProfileHeaderCard(voidBtnSelectPhoto: () => _selectPhoto()),
+            SettingProfileHeaderCard(
+              voidBtnSelectPhoto: () => _controller.onSelectPhoto(),
+              firstName: profile.firstNameTh,
+              lastName: profile.lastNameTh,
+              facName:  profile.facultyNameTh,
+              pictureBase64: profile.pictureBase64,
+            ),
 
             // 2. รายการตั้งค่า
             Container(
@@ -103,7 +104,9 @@ class _SettingPageState extends State<SettingPage> {
                     title: 'ออกจากระบบ',
                     icon: Icons.logout,
                     iconColor: Colors.red,
-                    onTap: _onLogout,
+                    onTap: () {
+                      _controller.onLogout(context);
+                    },
                   ),
                 ],
               ),

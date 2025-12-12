@@ -13,8 +13,9 @@ class _ServiceAccessPage extends State<ServiceAccessPage> {
   @override
   Widget build(BuildContext context) {
         return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F7),
+      backgroundColor: Colors.white70,
       appBar: AppBar(
+        backgroundColor: Colors.white70,
         title: const Text(
           'บริการทั้งหมด',
           style: TextStyle(fontWeight: FontWeight.bold),

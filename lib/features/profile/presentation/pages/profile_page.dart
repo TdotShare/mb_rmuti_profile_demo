@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mb_rmuti_profile_demo/core/store/notifier/user_profile_notifier.dart';
 import 'package:mb_rmuti_profile_demo/core/widgets/barcodeRenderer/barcode_renderer_widget.dart';
 import 'package:mb_rmuti_profile_demo/features/profile/presentation/widgets/profile_action_buton_widget.dart';
 import 'package:mb_rmuti_profile_demo/features/profile/presentation/widgets/profile_info_card_widget.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({ Key? key }) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  // ข้อมูลที่ใช้สร้าง Barcode/QRCode (สมมติว่าเป็นรหัสนักศึกษา)
-  final String studentId = '651234567890';
+class _ProfilePageState extends ConsumerState<ProfilePage> {
+
   final double cardSize = 250.0; // กำหนดขนาดสำหรับ QRCode/Barcode Card
 
   // ----------------------------------------------------------------------
@@ -23,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
   // ----------------------------------------------------------------------
   // 1. เมธอดสำหรับแสดง QR Code Popup
   // ----------------------------------------------------------------------
-  void _onScanQrCode() {
+  void _onScanQrCode(String codeId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -32,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
           content: SingleChildScrollView(
             child: BarcodeRendererWidget(
               bc: Barcode.qrCode(),
-              data: studentId,
+              data: codeId,
               type: 'QRCODE',
               cardSize: cardSize,
             ),
@@ -54,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
   // ----------------------------------------------------------------------
   // 2. เมธอดสำหรับแสดง Barcode Popup
   // ----------------------------------------------------------------------
-  void _onScanBarcode() {
+  void _onScanBarcode(String codeId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -63,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
           content: SingleChildScrollView(
             child: BarcodeRendererWidget( // ⬅️ เรียกใช้ Widget ใหม่
               bc: Barcode.code128(),
-              data: studentId,
+              data: codeId,
               type: 'BARCODE',
               cardSize: cardSize, // ส่งค่า cardSize เข้าไป
             ),
@@ -84,11 +85,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final profile = ref.watch(userProfileProvider);
+
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F7),
+      backgroundColor: Colors.white70,
       appBar: AppBar(
+        backgroundColor: Colors.white70,
         title: const Text(
           'โปรไฟล์',
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -99,10 +104,16 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Center(
           child: Column(
             children: [
-              SizedBox(height: screenHeight * 0.05),
-
+              SizedBox(height: screenHeight * 0.02),
               // 1. ส่วนบัตรนักศึกษา
-              const ProfileInfoCardWidget(),
+              ProfileInfoCardWidget(
+                codeId: profile.code?.toString(),
+                firstName: profile.firstNameTh,
+                lastName: profile.lastNameTh,
+                facName: profile.facultyNameTh,
+                pictureUrl: profile.picture,
+                pictureBase64: profile.pictureBase64,
+              ),
 
               SizedBox(height: screenHeight * 0.05),
 
@@ -114,13 +125,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     ProfileActionButonWidget(
                       title: 'QRCODE',
                       icon: Icons.qr_code,
-                      onTap: _onScanQrCode, // เรียกใช้เมธอดที่สร้าง QR Code Popup
+                      onTap: () {
+                        _onScanQrCode(profile.code.toString() ?? "");
+                      },
                     ),
                     const SizedBox(height: 15),
                     ProfileActionButonWidget(
                       title: 'BARCODE',
                       icon: Icons.view_headline_rounded,
-                      onTap: _onScanBarcode, // เรียกใช้เมธอดที่สร้าง Barcode Popup
+                      onTap: () {
+                        _onScanBarcode(profile.code.toString() ?? "");
+                      }
                     ),
                   ],
                 ),
