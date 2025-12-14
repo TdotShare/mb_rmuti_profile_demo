@@ -6,7 +6,6 @@ import 'package:mb_rmuti_profile_demo/core/store/notifier/user_profile_notifier.
 import 'package:mb_rmuti_profile_demo/features/setting/presentation/widgets/setting_item_label_widget.dart';
 import 'package:mb_rmuti_profile_demo/features/setting/presentation/widgets/setting_profile_header_card_widget.dart';
 import 'package:mb_rmuti_profile_demo/features/setting/setting_controller.dart';
-import 'package:mb_rmuti_profile_demo/routes/auth_router.dart';
 
 class SettingPage extends ConsumerStatefulWidget {
   const SettingPage({ Key? key }) : super(key: key);

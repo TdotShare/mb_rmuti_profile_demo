@@ -126,7 +126,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       title: 'QRCODE',
                       icon: Icons.qr_code,
                       onTap: () {
-                        _onScanQrCode(profile.code.toString() ?? "");
+                        _onScanQrCode(profile.code.toString());
                       },
                     ),
                     const SizedBox(height: 15),
@@ -134,7 +134,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       title: 'BARCODE',
                       icon: Icons.view_headline_rounded,
                       onTap: () {
-                        _onScanBarcode(profile.code.toString() ?? "");
+                        _onScanBarcode(profile.code.toString());
                       }
                     ),
                   ],
