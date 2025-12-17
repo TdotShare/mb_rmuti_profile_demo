@@ -36,7 +36,7 @@ class AuthButtonSectionWidget extends StatelessWidget {
   }
 
   Widget _buildSsoButton() {
-    if (!btnLoginSso) return const SizedBox.shrink();
+    if (btnLoginSso) return const SizedBox.shrink();
     return ElevatedButton(
       onPressed: voidBtnLoginSso, // กำหนด callback
       style: ElevatedButton.styleFrom(

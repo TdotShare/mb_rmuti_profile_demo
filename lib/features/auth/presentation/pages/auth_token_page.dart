@@ -9,7 +9,6 @@ import 'package:mb_rmuti_profile_demo/features/auth/presentation/widgets/auth_bu
 import 'package:mb_rmuti_profile_demo/routes/app_router.dart';
 import 'package:mb_rmuti_profile_demo/routes/auth_router.dart';
 import 'package:flutter/foundation.dart';
-import 'package:web/web.dart' as web;
 
 // SliverFadeTransition: wrapper สำหรับ FadeTransition
 class SliverFadeTransition extends StatelessWidget {
@@ -137,37 +136,6 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage>
   }
 
   Future<void> _checkUrlAndFetchApi() async {
-    // 1. ตรวจสอบว่าเป็น Web
-    if (kIsWeb) {
-      // ดึง URL ปัจจุบันจากเบราว์เซอร์
-      // ต้องแน่ใจว่าได้ import 'package:web/web.dart' as web; แล้ว
-      String currentUrl = web.window.location.href;
-      Uri uri = Uri.parse(currentUrl);
-      String? authCode = uri.queryParameters['code'];
-
-      if (authCode != null) {
-        // **A. ถ้ามี code อยู่: โยนเข้า AuthController และหยุดหมุน**
-        debugPrint('Found SSO Code: $authCode');
-        final _auth_controller = ref.read(authControllerProvider);
-
-        // (การทำงาน: แลก Code เป็น Token และ Navigate)
-        _auth_controller.onCheckTokenLogin(context, authCode);
-
-        // หยุดโหลดและหมุน (ถือว่า "โหลดเสร็จ" แล้ว)
-        if (!mounted) return;
-        setState(() {
-          _isLoaded = true;
-          _hasError = false;
-        });
-        _controller.forward();
-
-        // เมื่อจัดการ code เสร็จแล้ว ให้หยุดทำงาน
-        return;
-      } else {
-        // **B. ถ้าเป็น Web แต่ authCode เป็น null (เปิดหน้าโดยตรง)**
-        debugPrint(
-          'Web platform: No SSO code found. Stopping initial loading animation.',
-        );
 
         // หยุดโหลดและหมุนทันที (ถือว่า "โหลดเสร็จ" แล้ว)
 
@@ -180,8 +148,7 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage>
 
         // **และไม่ต้องไปเรียก _fetchApiWithDio() ต่อ**
         return;
-      }
-    }
+      
   }
 
   @override
