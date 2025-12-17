@@ -1,142 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mb_rmuti_profile_demo/core/store/notifier/user_profile_notifier.dart';
 import 'package:mb_rmuti_profile_demo/routes/auth_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:webview_flutter/webview_flutter.dart'; // <--- 1. Import SharedPreferences
-import 'package:web/web.dart' as web;
-import 'package:flutter/foundation.dart'; // สำหรับ kIsWeb
+import 'package:webview_flutter/webview_flutter.dart'; 
 
 class SettingRepository {
   final Ref _ref;
   SettingRepository(this._ref);
 
-  String _flexibleUrlWebSsoLogout() {
-    String currentFullUrl = web.window.location.href;
-    final uri = Uri.parse(currentFullUrl);
+  void onLogout(BuildContext context) async {
+    final logoutUrl = 'https://api.rmuti.ac.th/sso/index.php?logout';
 
- 
-    String basePath = '';
-    if (uri.path.isNotEmpty) {
-   
-      if (uri.pathSegments.isNotEmpty) {
-       
-        basePath = '/${uri.pathSegments.first}';
+    // 1. แสดง Modal พร้อม Loading Indicator และ WebView
+    await showGeneralDialog(
+      // **ใช้ await เพื่อรอจนกว่า Modal จะปิด**
+      context: context,
+      barrierDismissible: false,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, a1, a2) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            // A. WebViewWidget (ถูกซ่อนไว้ด้านล่าง)
+            Positioned(
+              width: 1.0,
+              height: 1.0,
+              child: WebViewWidget(
+                controller: WebViewController()
+                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                  ..loadRequest(Uri.parse(logoutUrl))
+                  ..setNavigationDelegate(
+                    NavigationDelegate(
+                      onPageFinished: (String url) {
+                        // เมื่อ SSO Logout เสร็จสิ้น ให้ปิด Modal
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+              ),
+            ),
 
-       
-        if (uri.pathSegments.length > 1 && uri.pathSegments.first.isNotEmpty) {
-        
-        }
-      } else {
-        basePath = '/';
-      }
-    } else {
-      basePath = '/';
-    }
-
-    final cleanRedirectUri = Uri(
-      scheme: uri.scheme,
-      host: uri.host,
-      port: uri.port,
-      path: basePath,
+            // B. Loading Indicator (แสดงต่อผู้ใช้)
+            ModalBarrier(
+              dismissible: false,
+              color: Colors.black.withOpacity(0.5),
+            ),
+            Container(
+              padding: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 10),
+                  Text(
+                    'กำลังออกจากระบบ',
+                    style: TextStyle(fontSize: 14, color: Colors.black),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
 
-    final encodedRedirectUrl = Uri.encodeComponent(cleanRedirectUri.toString());
-
-    final ssoLogoutUrl =
-        'https://api.rmuti.ac.th/sso/index.php?logout&redirect=${encodedRedirectUrl}';
-
-    return ssoLogoutUrl;
-  }
-
-  void onLogout(BuildContext context) async {
-    // --------------------------------------------------------
-    // 1. Clear ข้อมูลภายในแอปทันที (ไม่ว่าจะเป็น Web หรือ Mobile)
-    // --------------------------------------------------------
-    _ref.read(userProfileProvider.notifier).clearProfile();
-    print('User Profile State cleared (Riverpod).');
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    debugPrint('Shared Preferences data cleared.');
-
-    // --------------------------------------------------------
-    // 2. จัดการ SSO Logout และนำทาง (แยกตามแพลตฟอร์ม)
-    // --------------------------------------------------------
-
-    if (kIsWeb) {
-
-      final ssoLogoutUrl = _flexibleUrlWebSsoLogout();
-
-      web.window.location.replace(ssoLogoutUrl);
-
-    } else {
-      // **B. สำหรับ Mobile/Desktop: ใช้ WebViewWidget ที่ซ่อนอยู่เพื่อ Logout**
-      final logoutUrl = 'https://api.rmuti.ac.th/sso/index.php?logout';
-
-      // 1. แสดง Modal พร้อม Loading Indicator และ WebView
-      await showGeneralDialog(
-        // **ใช้ await เพื่อรอจนกว่า Modal จะปิด**
-        context: context,
-        barrierDismissible: false,
-        transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (context, a1, a2) {
-          return Stack(
-            alignment: Alignment.center,
-            children: [
-              // A. WebViewWidget (ถูกซ่อนไว้ด้านล่าง)
-              Positioned(
-                width: 1.0,
-                height: 1.0,
-                child: WebViewWidget(
-                  controller: WebViewController()
-                    ..setJavaScriptMode(JavaScriptMode.unrestricted)
-                    ..loadRequest(Uri.parse(logoutUrl))
-                    ..setNavigationDelegate(
-                      NavigationDelegate(
-                        onPageFinished: (String url) {
-                          // เมื่อ SSO Logout เสร็จสิ้น ให้ปิด Modal
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                ),
-              ),
-
-              // B. Loading Indicator (แสดงต่อผู้ใช้)
-              ModalBarrier(
-                dismissible: false,
-                color: Colors.black.withOpacity(0.5),
-              ),
-              Container(
-                padding: const EdgeInsets.all(20.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: const Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 10),
-                    Text(
-                      'กำลังออกจากระบบ',
-                      style: TextStyle(fontSize: 14, color: Colors.black),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      );
-
-      // 2. นำทางไปยังหน้า Login (เมื่อ Modal ถูกปิดแล้ว)
-      Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
-        AuthRoutes.authToken,
-        (Route<dynamic> route) => false,
-      );
-    }
+    Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
+      AuthRoutes.authToken,
+      (Route<dynamic> route) => false,
+    );
   }
 }
 

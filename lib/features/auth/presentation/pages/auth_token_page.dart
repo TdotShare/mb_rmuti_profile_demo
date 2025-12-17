@@ -141,7 +141,7 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage>
     if (kIsWeb) {
       // ดึง URL ปัจจุบันจากเบราว์เซอร์
       // ต้องแน่ใจว่าได้ import 'package:web/web.dart' as web; แล้ว
-      String currentUrl = web.window.location.href; 
+      String currentUrl = web.window.location.href;
       Uri uri = Uri.parse(currentUrl);
       String? authCode = uri.queryParameters['code'];
 
@@ -160,25 +160,26 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage>
           _hasError = false;
         });
         _controller.forward();
-        
-        // เมื่อจัดการ code เสร็จแล้ว ให้หยุดทำงาน
-        return; 
 
+        // เมื่อจัดการ code เสร็จแล้ว ให้หยุดทำงาน
+        return;
       } else {
         // **B. ถ้าเป็น Web แต่ authCode เป็น null (เปิดหน้าโดยตรง)**
-        debugPrint('Web platform: No SSO code found. Stopping initial loading animation.');
-        
+        debugPrint(
+          'Web platform: No SSO code found. Stopping initial loading animation.',
+        );
+
         // หยุดโหลดและหมุนทันที (ถือว่า "โหลดเสร็จ" แล้ว)
-        
+
         if (!mounted) return;
         setState(() {
           _isLoaded = true;
           _hasError = false;
         });
         _controller.forward();
-        
+
         // **และไม่ต้องไปเรียก _fetchApiWithDio() ต่อ**
-        return; 
+        return;
       }
     }
   }
@@ -256,12 +257,10 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage>
                           SliverFadeTransition(
                             animation: _animation,
                             child: AuthButtonSectionWidget(
+                              btnLoginOfficer: true,
+                              btnLoginSso: kIsWeb,
                               voidBtnLoginSso: () {
-                                if (kIsWeb) {
-                                  _auth_controller.onPressedSsoToWeb();
-                                } else {
-                                  _auth_controller.onPressedSso(context);
-                                }
+                                _auth_controller.onPressedSso(context);
                               },
                               voidBtnLoginOfficer: _onPressedOfficer,
                             ),
