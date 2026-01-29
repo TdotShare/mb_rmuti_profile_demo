@@ -46,7 +46,8 @@ class AppRouter {
   }
 
   // ปรับ pushAuthOauth ให้เรียกใช้ผ่านระบบ Named Route แทนเพื่อความสม่ำเสมอ
-  static Future<Map<String, String>?> pushAuthOauth(BuildContext context) {
-    return Navigator.of(context).pushNamed<Map<String, String>>(AuthRoutes.authOauth);
+  static Future<dynamic> pushAuthOauth(BuildContext context) {
+    // ลบ <Map<String, String>> ออกจาก pushNamed
+    return Navigator.of(context).pushNamed(AuthRoutes.authOauth);
   }
 }

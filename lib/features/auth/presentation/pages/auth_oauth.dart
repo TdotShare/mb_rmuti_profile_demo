@@ -78,8 +78,6 @@ class _AuthOauthPage extends State<AuthOauthPage> {
                 debugPrint('✅ Code: $decodedCode');
                 debugPrint('✅ Type: $decodedType');
 
-                // --- ส่วนที่ปรับปรุง: ปิด WebView และส่งค่ากลับ ---
-                // ปิดหน้าจอ AuthOauthPage และส่ง Map ของ code กับ type กลับไป
                 Navigator.pop(
                   context,
                   {

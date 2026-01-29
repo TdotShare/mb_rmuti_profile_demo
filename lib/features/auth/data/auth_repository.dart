@@ -1,5 +1,7 @@
 // ไฟล์: AuthRepository.dart (ปรับปรุง)
+import 'package:mb_rmuti_profile_demo/core/configs/web_stub.dart' if (dart.library.js_interop) 'package:web/web.dart' as web;
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // **1. เพิ่ม Riverpod**
 import 'package:mb_rmuti_profile_demo/core/store/notifier/user_profile_notifier.dart';
@@ -14,16 +16,25 @@ class AuthRepository {
   AuthRepository(this._ref); // Constructor รับ Ref
 
   void onPressedSso(BuildContext context) async {
-    final result = await AppRouter.pushAuthOauth(context);
-    if (result != null) {
-      final code = result['code'];
-      onCheckTokenLogin(context , code!);
+    if (kIsWeb) {
+      String currentOriginUrl = web.window.location.href;
+      String encodedUrl = Uri.encodeComponent(currentOriginUrl);
+      
+      String ssoUrl =
+          'https://mis.rmuti.ac.th/services-authen/auth?url=$encodedUrl&tag=rmuti_p_profile';
+      web.window.location.href = ssoUrl;
+      
+    } else {
+      final result = await AppRouter.pushAuthOauth(context);
+      if (result != null) {
+        final code = result['code'];
+        onCheckTokenLogin(context, code!);
+      }
     }
   }
-
+  
   void onCheckTokenLogin(BuildContext context, String code) async {
     if (code != "") {
-
       final Dio dio = Dio();
 
       try {
@@ -33,7 +44,6 @@ class AuthRepository {
         );
 
         if (response.statusCode == 200) {
-
           final Map<String, dynamic> userData = response.data;
 
           final userProfileNotifier = _ref.read(userProfileProvider.notifier);

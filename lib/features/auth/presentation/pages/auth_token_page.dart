@@ -9,6 +9,7 @@ import 'package:mb_rmuti_profile_demo/features/auth/presentation/widgets/auth_bu
 import 'package:mb_rmuti_profile_demo/routes/app_router.dart';
 import 'package:mb_rmuti_profile_demo/routes/auth_router.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mb_rmuti_profile_demo/core/configs/web_stub.dart' if (dart.library.js_interop) 'package:web/web.dart' as web;
 
 // SliverFadeTransition: wrapper สำหรับ FadeTransition
 class SliverFadeTransition extends StatelessWidget {
@@ -136,19 +137,31 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage>
   }
 
   Future<void> _checkUrlAndFetchApi() async {
+    // หยุดโหลดและหมุนทันที (ถือว่า "โหลดเสร็จ" แล้ว)
 
-        // หยุดโหลดและหมุนทันที (ถือว่า "โหลดเสร็จ" แล้ว)
+    if (kIsWeb) {
+      String currentUrl = web.window.location.href;
+      Uri uri = Uri.parse(currentUrl);
+      String? authCode = uri.queryParameters['code'];
 
-        if (!mounted) return;
-        setState(() {
-          _isLoaded = true;
-          _hasError = false;
-        });
-        _controller.forward();
+      if (authCode != null) {
+        // **A. ถ้ามี code อยู่: โยนเข้า AuthController และหยุดหมุน**
+        debugPrint('Found SSO Code: $authCode');
+        final _auth_controller = ref.read(authControllerProvider);
+        // (การทำงาน: แลก Code เป็น Token และ Navigate)
+        _auth_controller.onCheckTokenLogin(context, authCode);
+      }
+    }
 
-        // **และไม่ต้องไปเรียก _fetchApiWithDio() ต่อ**
-        return;
-      
+    if (!mounted) return;
+    setState(() {
+      _isLoaded = true;
+      _hasError = false;
+    });
+    _controller.forward();
+
+    // **และไม่ต้องไปเรียก _fetchApiWithDio() ต่อ**
+    return;
   }
 
   @override
@@ -225,7 +238,7 @@ class _AuthTokenPageState extends ConsumerState<AuthTokenPage>
                             animation: _animation,
                             child: AuthButtonSectionWidget(
                               btnLoginOfficer: true,
-                              btnLoginSso: kIsWeb,
+                              btnLoginSso: true,
                               voidBtnLoginSso: () {
                                 _auth_controller.onPressedSso(context);
                               },
