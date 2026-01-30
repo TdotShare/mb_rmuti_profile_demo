@@ -1,12 +1,14 @@
 // lib/routes/app_router.dart
 import 'package:flutter/material.dart';
 import 'package:mb_rmuti_profile_demo/routes/auth_router.dart';
+import 'package:mb_rmuti_profile_demo/routes/schedule_class_router.dart';
 import 'package:mb_rmuti_profile_demo/routes/service_access_router.dart';
 
 class AppRouter {
   static final Map<String, WidgetBuilder> _routes = {
     ...AuthRouter.routes,
     ...ServiceAccessRouter.routes,
+    ...ScheduleClassRouter.routes,
   };
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {

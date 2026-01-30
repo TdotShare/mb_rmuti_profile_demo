@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mb_rmuti_profile_demo/features/service_access/presentation/service_access_page.dart';
+import 'package:mb_rmuti_profile_demo/features/service_access/presentation/pages/service_access_page.dart';
 
 
 class ServiceAccessRouters {

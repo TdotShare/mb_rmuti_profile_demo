@@ -7,16 +7,17 @@ import 'package:mb_rmuti_profile_demo/routes/service_access_router.dart';
 class HomeController {
   final HomeRepository _repository = HomeRepository();
 
-  Future<List<HomeUserNotificationListModel>> getNotificationList() async { 
-    final notificationList = await _repository.getNotificationList(); 
+  Future<List<HomeUserNotificationListModel>> getNotificationList() async {
+    final notificationList = await _repository.getNotificationList();
     return notificationList;
   }
 
   // 🚀 แก้ไข: ให้เมธอดนี้รับ BuildContext เข้ามา
-  void btnServiceAccess(BuildContext context)
-  {
+  void btnServiceAccess(BuildContext context) {
     // ตอนนี้ AppRouter.push ก็จะสามารถใช้ context ที่ถูกส่งเข้ามาได้
-    AppRouter.push(context, ServiceAccessRouters.serviceAccess);
-    print("btnServiceAccess !");
+    Navigator.of(
+      context,
+      rootNavigator: true,
+    ).pushNamed(ServiceAccessRouters.serviceAccess);
   }
 }

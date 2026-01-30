@@ -1,7 +1,7 @@
 // lib/routes/home_tab_router.dart
 import 'package:flutter/material.dart';
 import 'package:mb_rmuti_profile_demo/features/home/presentation/widgets/home_content_widget.dart';
-import 'package:mb_rmuti_profile_demo/features/service_access/presentation/service_access_page.dart'; 
+import 'package:mb_rmuti_profile_demo/features/service_access/presentation/pages/service_access_page.dart'; 
 import 'package:mb_rmuti_profile_demo/routes/service_access_router.dart'; // ใช้ ServiceAccessRouters
 
 class HomeTabRouter {
@@ -16,7 +16,7 @@ class HomeTabRouter {
 
     // 2. หน้าบริการทั้งหมด
     // ใช้ชื่อ Route ที่กำหนดไว้ใน ServiceAccessRouters เพื่อความสอดคล้อง
-    ServiceAccessRouters.serviceAccess: (context) => const ServiceAccessPage(),
+    //ServiceAccessRouters.serviceAccess: (context) => const ServiceAccessPage(),
 
     // 🚀 เพิ่มหน้าใหม่ๆ สำหรับ Tab Home ในอนาคตที่นี่
     // '/new-page-in-home-tab': (context) => const NewPageInHomeTab(),
