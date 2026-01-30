@@ -53,9 +53,7 @@ class _ServiceAccessPageState extends ConsumerState<ServiceAccessPage> {
                 title: "คะแนนกิจกรรม",
                 icon: Icons.stars_rounded,
                 iconColor: Colors.amber,
-                onTap: () {
-                  // TODO: เพิ่ม logic
-                },
+                onTap: () => _serviceAccessController.onPressedGoToActivityScore(context),
               ),
               const SizedBox(height: 8),
               ServiceAccessItemLabelWidget(
