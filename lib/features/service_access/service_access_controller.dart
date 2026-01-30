@@ -18,6 +18,11 @@ class ServiceAccessController {
     final _repository = _ref.read(serviceAccessRepositoryProvider);
     _repository.onPressedGoToActivityScore(context);
   }
+
+  void onPressedGoToDepartmentStudent(BuildContext context) async {
+    final _repository = _ref.read(serviceAccessRepositoryProvider);
+    _repository.onPressedGoToDepartmentStudent(context);
+  }
 }
 
 // -------------------

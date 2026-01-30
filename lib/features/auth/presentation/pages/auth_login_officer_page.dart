@@ -12,35 +12,59 @@ class AuthLoginOfficerPage extends StatefulWidget {
 }
 
 class _AuthLoginOfficerPageState extends State<AuthLoginOfficerPage> {
-
   void login(String username, String password) {
-    print("USERNAME: $username");
-    print("PASSWORD: $password");
-
     AppRouter.push(context, AuthRoutes.home);
-  }
-
-  void btnBack() {
-    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final size = MediaQuery.of(context).size.height;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SingleChildScrollView( // ⬅️ เพิ่ม SingleChildScrollView เพื่อรองรับหน้าจอขนาดเล็ก
-        child: Column(
-          children: [
-            SizedBox(height: size * 0.1), // ⬅️ ลดระยะห่างด้านบน
-            const AuthAppLogoWidget(),
-            AuthLoginFormWidget(
-              onSubmit: (username, password) => login(username, password),
-              voidBtnBack:  () => btnBack(),
-            ),
-            const SizedBox(height: 50), // เพิ่มระยะห่างด้านล่าง
-          ],
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        // ✅ เพิ่มพื้นหลังแบบไล่เฉดสี
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              const Color(0xFFFF8A00).withOpacity(0.1),
+              Colors.white,
+            ],
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: size.height * 0.12),
+              // ส่วนโลโก้
+              const AuthAppLogoWidget(),
+              const SizedBox(height: 10),
+              const Text(
+                'ระบบเจ้าหน้าที่ (Officer)',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const Text(
+                'กรุณาเข้าสู่ระบบเพื่อดำเนินการต่อ',
+                style: TextStyle(color: Colors.grey),
+              ),
+              const SizedBox(height: 30),
+              // ✅ นำ Form ไปใส่ในพื้นที่จำกัดเพื่อให้ดูเป็น Card
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: AuthLoginFormWidget(
+                  onSubmit: login,
+                  voidBtnBack: () => Navigator.pop(context),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

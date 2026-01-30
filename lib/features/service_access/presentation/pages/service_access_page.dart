@@ -60,9 +60,7 @@ class _ServiceAccessPageState extends ConsumerState<ServiceAccessPage> {
                 title: "รายชื่อนักศึกษาในสังกัด",
                 icon: Icons.people_alt_rounded,
                 iconColor: Colors.blueAccent,
-                onTap: () {
-                  // TODO: เพิ่ม logic
-                },
+                onTap: () => _serviceAccessController.onPressedGoToDepartmentStudent(context),
               ),
             ],
           ),
