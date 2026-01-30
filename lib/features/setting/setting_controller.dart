@@ -12,7 +12,7 @@ class SettingController {
     _repository.onLogout(context);
   }
 
-  void onSelectPhoto() {
+  void onSelectPhoto(BuildContext context) {
     print("Select Photo function called.");
   }
 

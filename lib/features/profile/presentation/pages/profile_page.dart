@@ -7,14 +7,13 @@ import 'package:mb_rmuti_profile_demo/features/profile/presentation/widgets/prof
 import 'package:mb_rmuti_profile_demo/features/profile/presentation/widgets/profile_info_card_widget.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
-  const ProfilePage({ Key? key }) : super(key: key);
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
-
   final double cardSize = 250.0; // กำหนดขนาดสำหรับ QRCode/Barcode Card
 
   // ----------------------------------------------------------------------
@@ -62,7 +61,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         return AlertDialog(
           title: const Text('Barcode', textAlign: TextAlign.center),
           content: SingleChildScrollView(
-            child: BarcodeRendererWidget( // ⬅️ เรียกใช้ Widget ใหม่
+            child: BarcodeRendererWidget(
+              // ⬅️ เรียกใช้ Widget ใหม่
               bc: Barcode.code128(),
               data: codeId,
               type: 'BARCODE',
@@ -85,64 +85,100 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-
     final profile = ref.watch(userProfileProvider);
-
-    final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+
+    if (profile == null)
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+
     return Scaffold(
-      backgroundColor: Colors.white70,
+      extendBodyBehindAppBar: true, // ให้พื้นหลังทะลุไปถึง AppBar
       appBar: AppBar(
-        backgroundColor: Colors.white70,
         title: const Text(
-          'โปรไฟล์',
+          'โปรไฟล์นักศึกษา',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(height: screenHeight * 0.02),
-              // 1. ส่วนบัตรนักศึกษา
-              ProfileInfoCardWidget(
-                codeId: profile.code?.toString(),
-                firstName: profile.firstNameTh,
-                lastName: profile.lastNameTh,
-                facName: profile.facultyNameTh,
-                pictureUrl: profile.picture,
-                pictureBase64: profile.pictureBase64,
+      body: Stack(
+        children: [
+          // 1. Background Gradient
+          Container(
+            height: 300,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xFFFF8A00), Colors.white], // สีส้ม RMUTI
               ),
-
-              SizedBox(height: screenHeight * 0.05),
-
-              // 2. ปุ่ม QRCODE และ BARCODE
-              SizedBox(
-                width: screenWidth * 0.90,
-                 child: Column(
-                  children: [
-                    ProfileActionButonWidget(
-                      title: 'QRCODE',
-                      icon: Icons.qr_code,
-                      onTap: () {
-                        _onScanQrCode(profile.code.toString());
-                      },
-                    ),
-                    const SizedBox(height: 15),
-                    ProfileActionButonWidget(
-                      title: 'BARCODE',
-                      icon: Icons.view_headline_rounded,
-                      onTap: () {
-                        _onScanBarcode(profile.code.toString());
-                      }
-                    ),
-                  ],
-                ),
-              )
-            ],
+            ),
           ),
-        ),
+          // 2. Content
+          SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                const SizedBox(height: kToolbarHeight + 60),
+                // ส่วนบัตรนักศึกษา
+                ProfileInfoCardWidget(
+                  codeId: profile.code?.toString(),
+                  firstName: profile.firstNameTh,
+                  lastName: profile.lastNameTh,
+                  facName: profile.facultyNameTh,
+                  pictureUrl: profile.picture,
+                  pictureBase64: profile.pictureBase64,
+                ),
+
+                const SizedBox(height: 40),
+
+                // ส่วนปุ่ม Action
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "บริการดิจิทัล",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ProfileActionButonWidget(
+                              title: 'QR Code',
+                              icon: Icons.qr_code_2_rounded,
+                              onTap: () => _onScanQrCode("${profile.code ?? ""}"),
+                              color: const Color(0xFFFF8A00),
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: ProfileActionButonWidget(
+                              title: 'Barcode',
+                              icon: Icons.view_headline_rounded,
+                              onTap: () => _onScanBarcode("${profile.code ?? ""}"),
+                              color: Colors.blueGrey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 30),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
