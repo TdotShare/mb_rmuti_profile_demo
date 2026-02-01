@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mb_rmuti_profile_demo/routes/activity_score_router.dart';
 import 'package:mb_rmuti_profile_demo/routes/auth_router.dart';
 import 'package:mb_rmuti_profile_demo/routes/department_student_router.dart';
+import 'package:mb_rmuti_profile_demo/routes/eleave_router.dart';
 import 'package:mb_rmuti_profile_demo/routes/schedule_class_router.dart';
 import 'package:mb_rmuti_profile_demo/routes/service_access_router.dart';
 
@@ -12,7 +13,8 @@ class AppRouter {
     ...ServiceAccessRouter.routes,
     ...ScheduleClassRouter.routes,
     ...ActivityScoreRouter.routes,
-    ...DepartmentStudentRouter.routes
+    ...DepartmentStudentRouter.routes,
+    ...EleaveRouter.routes
   };
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {

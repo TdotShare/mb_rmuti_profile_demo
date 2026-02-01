@@ -17,7 +17,7 @@ class _ServiceAccessPageState extends ConsumerState<ServiceAccessPage> {
 
     return Scaffold(
       // เปลี่ยนจาก white70 เป็นสีเทาอ่อนแบบ Modern เพื่อให้ Card สีขาวดูเด่นขึ้น
-      backgroundColor: const Color(0xFFF5F7FA), 
+      backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
         backgroundColor: const Color(0xFFF5F7FA),
         elevation: 0, // ลบเงาออกเพื่อให้ดูแบนราบทันสมัย
@@ -32,12 +32,14 @@ class _ServiceAccessPageState extends ConsumerState<ServiceAccessPage> {
         centerTitle: true,
         // เพิ่มปุ่มย้อนกลับให้ชัดเจน (เนื่องจากเราเปิดแบบ Full Screen)
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new,
+              color: Colors.black87, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(), // เพิ่มฟีลลิ่งการไถหน้าจอแบบลื่นๆ
+        physics:
+            const BouncingScrollPhysics(), // เพิ่มฟีลลิ่งการไถหน้าจอแบบลื่นๆ
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(
@@ -46,21 +48,32 @@ class _ServiceAccessPageState extends ConsumerState<ServiceAccessPage> {
                 title: "ตารางเรียนนักศึกษา",
                 icon: Icons.calendar_month_rounded,
                 iconColor: const Color(0xFFFF8A00), // ใช้สีส้ม RMUTI
-                onTap: () => _serviceAccessController.onPressedGoToScheduleClass(context),
+                onTap: () => _serviceAccessController
+                    .onPressedGoToScheduleClass(context),
               ),
               const SizedBox(height: 8),
               ServiceAccessItemLabelWidget(
                 title: "คะแนนกิจกรรม",
                 icon: Icons.stars_rounded,
                 iconColor: Colors.amber,
-                onTap: () => _serviceAccessController.onPressedGoToActivityScore(context),
+                onTap: () => _serviceAccessController
+                    .onPressedGoToActivityScore(context),
               ),
               const SizedBox(height: 8),
               ServiceAccessItemLabelWidget(
                 title: "รายชื่อนักศึกษาในสังกัด",
                 icon: Icons.people_alt_rounded,
                 iconColor: Colors.blueAccent,
-                onTap: () => _serviceAccessController.onPressedGoToDepartmentStudent(context),
+                onTap: () => _serviceAccessController
+                    .onPressedGoToDepartmentStudent(context),
+              ),
+              const SizedBox(height: 8),
+              ServiceAccessItemLabelWidget(
+                title: "ภาพรวมสิทธิ์ลาของคุณ",
+                icon: Icons.timelapse_sharp,
+                iconColor: Colors.greenAccent,
+                onTap: () => _serviceAccessController
+                    .onPressedGoToEleave(context),
               ),
             ],
           ),

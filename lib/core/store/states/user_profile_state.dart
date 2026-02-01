@@ -1,6 +1,7 @@
 // user_profile_state.dart
 
 class UserProfileState {
+  final String? username;
   final String? firstNameTh;
   final String? lastNameTh;
   final String? facultyNameTh;
@@ -11,6 +12,7 @@ class UserProfileState {
 
   // สถานะเริ่มต้น (เช่น ผู้ใช้ยังไม่เข้าสู่ระบบ)
   const UserProfileState({
+    this.username,
     this.firstNameTh,
     this.lastNameTh,
     this.facultyNameTh,
@@ -22,6 +24,7 @@ class UserProfileState {
 
   // ใช้สำหรับการคัดลอกสถานะเดิมและเปลี่ยนเฉพาะบางฟิลด์
   UserProfileState copyWith({
+    String? username,
     String? firstNameTh,
     String? lastNameTh,
     String? facultyNameTh,
@@ -31,6 +34,7 @@ class UserProfileState {
     int? code,
   }) {
     return UserProfileState(
+      username: username ?? this.username,
       firstNameTh: firstNameTh ?? this.firstNameTh,
       lastNameTh: lastNameTh ?? this.lastNameTh,
       facultyNameTh: facultyNameTh ?? this.facultyNameTh,
@@ -43,14 +47,20 @@ class UserProfileState {
 
   // ตัวช่วยในการแปลงจาก Map (กรณีที่ได้รับข้อมูล JSON มา)
   factory UserProfileState.fromJson(Map<String, dynamic> json) {
+    // 1. ดึงค่าจาก key 'id' (หรือ 'username' ตามที่ API ส่งมา)
+    String? rawId = json['id']?.toString(); 
+    // 2. ตัดเอาเฉพาะส่วนก่อนเครื่องหมาย @
+    String? cleanUsername = rawId?.split('@').first;
+
     return UserProfileState(
+      username: cleanUsername, // นำค่าที่ตัดแล้วมาใส่ที่นี่
       firstNameTh: json['first_name_th']?.toString(),
       lastNameTh: json['last_name_th']?.toString(),
       facultyNameTh: json['faculty_name_th']?.toString(),
       picture: json['picture']?.toString(),
       pictureBase64: json['picture_base64']?.toString(),
       citizenId: json['citizen_id']?.toString(),
-      code: _toInt(json['code']), // ใช้ Helper ที่เราจะสร้าง
+      code: _toInt(json['code']),
     );
   }
 }

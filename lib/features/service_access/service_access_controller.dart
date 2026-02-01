@@ -23,6 +23,11 @@ class ServiceAccessController {
     final _repository = _ref.read(serviceAccessRepositoryProvider);
     _repository.onPressedGoToDepartmentStudent(context);
   }
+
+  void onPressedGoToEleave(BuildContext context) async {
+    final _repository = _ref.read(serviceAccessRepositoryProvider);
+    _repository.onPressedGotoEleave(context);
+  }
 }
 
 // -------------------
