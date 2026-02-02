@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mb_rmuti_profile_demo/core/store/notifier/user_profile_notifier.dart';
-import 'package:mb_rmuti_profile_demo/routes/app_router.dart';
 import 'package:mb_rmuti_profile_demo/routes/auth_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -12,21 +11,18 @@ class SettingRepository {
   final Ref _ref;
   SettingRepository(this._ref);
 
-  /// ฟังก์ชันหลักสำหรับ Logout รองรับทั้ง Web และ Mobile
+  /// ฟังก์ชันหลักสำหรับ Logout
   void onLogout(BuildContext context) async {
-    // 1. เตรียม Base URL และ Logout URL
     String baseUrl = "";
     if (kIsWeb) {
       final uri = Uri.parse(web.window.location.href);
       baseUrl = uri.origin;
     }
-    
-    // กำหนด URL สำหรับ Logout (เพิ่ม redirect_uri สำหรับ Web)
-    final logoutUrl = kIsWeb 
+
+    final logoutUrl = kIsWeb
         ? 'https://api.rmuti.ac.th/sso/index.php?logout&redirect=$baseUrl'
         : 'https://api.rmuti.ac.th/sso/index.php?logout';
 
-    // 2. จัดการ Logout ตาม Platform
     if (kIsWeb) {
       await _executeWebLogout(logoutUrl);
     } else {
@@ -34,89 +30,115 @@ class SettingRepository {
     }
   }
 
-  /// สำหรับ Web: ล้างข้อมูลแล้ว Redirect ทั้งหน้าต่าง
   Future<void> _executeWebLogout(String logoutUrl) async {
     await _clearLocalData();
-    // ย้ายหน้าไปยัง SSO Logout ทันที (Browser จะจัดการ Redirect กลับมา baseUrl เอง)
     web.window.location.href = logoutUrl;
   }
 
-  /// สำหรับ Mobile: แสดง Modal และใช้ WebView แอบโหลด Logout URL
+  /// สำหรับ Mobile: แก้ไขป้องกันอาการจอดำ (Release Mode)
   Future<void> _executeMobileLogout(BuildContext context, String logoutUrl) async {
+    // 1. เก็บ Navigator และ ScaffoldMessenger ไว้ก่อนเริ่ม Async
+    final navigator = Navigator.of(context, rootNavigator: true);
+
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
       transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (context, a1, a2) {
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            // WebView ถูกเรียกเฉพาะบน Mobile เท่านั้น เพื่อป้องกัน Error บน Web
-            Positioned(
-              width: 1.0,
-              height: 1.0,
-              child: WebViewWidget(
-                controller: WebViewController()
-                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
-                  ..loadRequest(Uri.parse(logoutUrl))
-                  ..setNavigationDelegate(
-                    NavigationDelegate(
-                      onPageFinished: (String url) {
-                        // เมื่อโหลดหน้า Logout สำเร็จ ให้ปิด Modal
-                        Navigator.of(context).pop();
-                      },
-                    ),
+      pageBuilder: (dialogContext, a1, a2) {
+        return PopScope( // ป้องกันการกดปุ่ม Back ระหว่าง Logout
+          canPop: false,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // WebView สำหรับแอบรันคำสั่ง Logout
+              Positioned(
+                width: 1.0,
+                height: 1.0,
+                child: Opacity(
+                  opacity: 0.01,
+                  child: WebViewWidget(
+                    controller: WebViewController()
+                      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                      ..setNavigationDelegate(
+                        NavigationDelegate(
+                          onPageFinished: (String url) {
+                            // เมื่อโหลดเสร็จ ปิด Dialog
+                            if (navigator.canPop()) {
+                              navigator.pop();
+                            }
+                          },
+                          onWebResourceError: (error) {
+                            // กรณี Error (เช่นเน็ตหลุด) ต้องปิด Dialog เช่นกัน เพื่อไม่ให้ค้างจอดำ
+                            debugPrint('Logout WebView Error: ${error.description}');
+                            if (navigator.canPop()) {
+                              navigator.pop();
+                            }
+                          },
+                        ),
+                      )
+                      ..loadRequest(Uri.parse(logoutUrl)),
                   ),
+                ),
               ),
-            ),
-
-            ModalBarrier(
-              dismissible: false,
-              color: Colors.black.withOpacity(0.5),
-            ),
-
-            _buildLoadingIndicator(),
-          ],
+              ModalBarrier(
+                dismissible: false,
+                color: Colors.black.withOpacity(0.5),
+              ),
+              _buildLoadingIndicator(),
+            ],
+          ),
         );
       },
     ).then((_) async {
-      // หลังจาก Dialog ปิดลง (Logout เสร็จ) ให้ล้างข้อมูลแล้วกลับไปหน้า Login
+      // 2. หลังจาก Dialog ปิดลง ไม่ว่าจะสำเร็จหรือ Error
       await _clearLocalData();
+
+      // 3. ตรวจสอบ Mounted ของ Context หรือใช้ Navigator ที่เก็บค่าไว้
       if (context.mounted) {
-        Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
+        navigator.pushNamedAndRemoveUntil(
           AuthRoutes.authToken,
-          (Route<dynamic> route) => false,
+              (Route<dynamic> route) => false,
         );
       }
     });
   }
 
-  /// ล้างข้อมูล Profile และ SharedPreferences
   Future<void> _clearLocalData() async {
-    _ref.read(userProfileProvider.notifier).clearProfile();
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    debugPrint('All local data cleared.');
+    try {
+      _ref.read(userProfileProvider.notifier).clearProfile();
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      debugPrint('All local data cleared.');
+    } catch (e) {
+      debugPrint('Error clearing data: $e');
+    }
   }
 
-  /// UI ส่วน Loading
   Widget _buildLoadingIndicator() {
-    return Container(
-      padding: const EdgeInsets.all(20.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: const Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircularProgressIndicator(color: Color(0xFFFF8A00)),
-          SizedBox(height: 16),
-          DefaultTextStyle(
-            style: TextStyle(fontFamily: 'Kanit', fontSize: 16, color: Colors.black),
-            child: Text('กำลังออกจากระบบ'),
-          ),
-        ],
+    return Material( // ใส่ Material เพื่อให้ Text แสดงผลถูกต้องไม่เป็นเส้นใต้แดง
+      type: MaterialType.transparency,
+      child: Container(
+        padding: const EdgeInsets.all(20.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(color: Color(0xFFFF8A00)),
+            SizedBox(height: 16),
+            Text(
+              'กำลังออกจากระบบ',
+              style: TextStyle(
+                  fontFamily: 'Kanit',
+                  fontSize: 16,
+                  color: Colors.black,
+                  decoration: TextDecoration.none
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
